@@ -1,8 +1,0 @@
-# Book settings
-title: Proyek Sains Data
-author: Ahmad Soleh Majid
-logo: aji.jpg
-
-# Execution settings
-execute:
-  execute_notebooks: auto

@@ -1,0 +1,9 @@
+# Book settings
+title: Proyek Sains Data
+author: Ahmad Soleh Majid
+logo: aji.jpg
+
+# HTML-specific settings
+html:
+  use_issues_button: false
+  use_repository_button: false
