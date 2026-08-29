@@ -24,6 +24,20 @@
 
 ## About The Jupyter Book
 
-Jupyter Book adalah framework untuk membuat buku,
-dokumentasi, dan website interaktif menggunakan Markdown
-dan Jupyter Notebook.
+```{note}
+Jupyter Book ini saya gunakan untuk mendokumentasikan proses dan hasil belajar selama mengikuti
+mata kuliah **Proyek Sains Data**. Di dalamnya saya juga menyimpan berbagai proyek, catatan,
+serta hal-hal yang saya pelajari dan dapatkan selama proses perkuliahan.
+```
+
+Di dalam Jupyter Book ini digunakan diantaranya :
+
+- Untuk mencatat tugas yang ada.
+- Mencatat hasil ekperimen tentang PSD
+
+## Motto
+
+```{admonition} Hidup Merupakan Jalan
+:class: tip
+Setiap langkah yang diambil adalah bagian dari perjalanan. Nikmati prosesnya, pelajari dari kegagalannya, dan teruslah melangkah maju.
+```
