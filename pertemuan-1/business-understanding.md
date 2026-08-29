@@ -1,6 +1,6 @@
 # Business Understanding
 
-Tahap awal untuk memahami latar belakang dan tujuan analisis polutan di Kabupaten Gresik.
+Tahap awal untuk memahami latar belakang 
 
 ## Tujuan Analisis
 - Mengidentifikasi wilayah dengan tingkat polusi tertinggi.
