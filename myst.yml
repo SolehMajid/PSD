@@ -1,0 +1,13 @@
+version: 1
+project:
+  title: Proyek Sains Data
+  authors:
+    - name: Ahmad Soleh Majid
+  toc:
+    - file: intro.md
+    - file: Pertemuan-1/index.md
+site:
+  options:
+    logo: aji.jpg
+    folders: true
+  template: book-theme
