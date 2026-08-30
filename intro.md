@@ -1,7 +1,8 @@
 ## Selamat Datang di Proyek Sains Data
 
 <div align="center">
-  <img src="aji.jpg" alt="Ahmad Soleh Majid" width="150" style="border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); object-fit: cover; aspect-ratio: 1/1; display: block; margin: 10px auto;">
+
+![Ahmad Soleh Majid](aji.jpg){width=150px style="border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); object-fit: cover; aspect-ratio: 1/1; display: block; margin: 10px auto;"}
 
   <table style="border-collapse: collapse; border: none; margin: 20px auto; background-color: transparent;">
     <tr style="border: none; background-color: transparent;">
