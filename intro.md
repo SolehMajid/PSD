@@ -1,4 +1,4 @@
-# 💻 Selamat Datang di Proyek Sains Data
+## Selamat Datang di Proyek Sains Data
 
 <div align="center">
   <table style="border-collapse: collapse; border: none; margin: 20px auto; background-color: transparent;">
@@ -36,11 +36,11 @@
 
 ---
 
-## 👤 Tentang Saya
+##  Tentang Saya
 
 Halo! Saya adalah mahasiswa **Teknik Informatika** yang memiliki minat kuat di bidang **pengembangan web, pemrograman, dan data science**. Saya senang mempelajari bagaimana teknologi dapat digunakan untuk mengolah data menjadi informasi yang bermanfaat serta membangun aplikasi yang menyelesaikan permasalahan secara sistematis.
 
-### 🛠️ Keahlian & Teknologi
+###  Keahlian & Teknologi
 
 Berikut adalah beberapa teknologi dan tools yang biasa saya gunakan untuk menunjang pengerjaan proyek:
 
@@ -51,7 +51,7 @@ Berikut adalah beberapa teknologi dan tools yang biasa saya gunakan untuk menunj
 | **Database & Git** | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white) ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) |
 | **Desain UI/UX** | ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white) |
 
-### 💡 Prinsip Belajar
+### Prinsip Belajar
 
 > **"Terus belajar, membangun proyek nyata, dan berkembang melalui praktik langsung."**
 > Bagi saya, pemahaman teknis bukan sekadar menghafal sintaks atau tools, melainkan kemampuan menganalisis masalah dan menciptakan solusi yang efektif serta berguna bagi banyak orang.
