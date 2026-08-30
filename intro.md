@@ -1,32 +1,16 @@
 ## Selamat Datang di Proyek Sains Data
 
-<div align="center">
+```{figure} aji.jpg
+:width: 20%
+:align: center
+``
 
-![Ahmad Soleh Majid](aji.jpg){width=150px style="border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); object-fit: cover; aspect-ratio: 1/1; display: block; margin: 10px auto;"}
-
-  <table style="border-collapse: collapse; border: none; margin: 20px auto; background-color: transparent;">
-    <tr style="border: none; background-color: transparent;">
-      <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50; text-align: left;">Nama</td>
-      <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
-      <td style="border: none; padding: 4px 8px; color: #2c3e50; font-weight: bold; text-align: left;">Ahmad Soleh Majid</td>
-    </tr>
-    <tr style="border: none; background-color: transparent;">
-      <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50; text-align: left;">NIM</td>
-      <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
-      <td style="border: none; padding: 4px 8px; color: #2c3e50; text-align: left;">240411100076</td>
-    </tr>
-    <tr style="border: none; background-color: transparent;">
-      <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50; text-align: left;">Program Studi</td>
-      <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
-      <td style="border: none; padding: 4px 8px; color: #2c3e50; text-align: left;">Teknik Informatika</td>
-    </tr>
-    <tr style="border: none; background-color: transparent;">
-      <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50; text-align: left;">Mata Kuliah</td>
-      <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
-      <td style="border: none; padding: 4px 8px; color: #2c3e50; text-align: left;">Proyek Sains Data IF-5B</td>
-    </tr>
-  </table>
-</div>
+| | | |
+|---|---|---|
+| **Nama** | : | **Ahmad Soleh Majid** |
+| **NIM** | : | 240411100076 |
+| **Program Studi** | : | Teknik Informatika |
+| **Mata Kuliah** | : | Proyek Sains Data IF-5B |
 
 ---
 
