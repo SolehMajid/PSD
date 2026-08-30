@@ -1,46 +1,39 @@
 ## Selamat Datang di Proyek Sains Data
 
 <div align="center">
+  <img src="aji.jpg" alt="Ahmad Soleh Majid" width="150" style="border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); object-fit: cover; aspect-ratio: 1/1; display: block; margin: 10px auto;">
+
   <table style="border-collapse: collapse; border: none; margin: 20px auto; background-color: transparent;">
     <tr style="border: none; background-color: transparent;">
-      <td style="border: none; padding: 15px; text-align: center; vertical-align: middle; background-color: transparent;">
-        <img src="aji.jpg" alt="Ahmad Soleh Majid" width="150" style="border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); object-fit: cover; aspect-ratio: 1/1;">
-      </td>
-      <td style="border: none; padding: 15px 30px; text-align: left; vertical-align: middle; background-color: transparent;">
-        <table style="border-collapse: collapse; border: none; background-color: transparent;">
-          <tr style="border: none; background-color: transparent;">
-            <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50;">Nama</td>
-            <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
-            <td style="border: none; padding: 4px 8px; color: #2c3e50; font-weight: bold;">Ahmad Soleh Majid</td>
-          </tr>
-          <tr style="border: none; background-color: transparent;">
-            <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50;">NIM</td>
-            <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
-            <td style="border: none; padding: 4px 8px; color: #2c3e50;">240411100076</td>
-          </tr>
-          <tr style="border: none; background-color: transparent;">
-            <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50;">Program Studi</td>
-            <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
-            <td style="border: none; padding: 4px 8px; color: #2c3e50;">Teknik Informatika</td>
-          </tr>
-          <tr style="border: none; background-color: transparent;">
-            <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50;">Mata Kuliah</td>
-            <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
-            <td style="border: none; padding: 4px 8px; color: #2c3e50;">Proyek Sains Data IF-5B</td>
-          </tr>
-        </table>
-      </td>
+      <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50; text-align: left;">Nama</td>
+      <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
+      <td style="border: none; padding: 4px 8px; color: #2c3e50; font-weight: bold; text-align: left;">Ahmad Soleh Majid</td>
+    </tr>
+    <tr style="border: none; background-color: transparent;">
+      <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50; text-align: left;">NIM</td>
+      <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
+      <td style="border: none; padding: 4px 8px; color: #2c3e50; text-align: left;">240411100076</td>
+    </tr>
+    <tr style="border: none; background-color: transparent;">
+      <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50; text-align: left;">Program Studi</td>
+      <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
+      <td style="border: none; padding: 4px 8px; color: #2c3e50; text-align: left;">Teknik Informatika</td>
+    </tr>
+    <tr style="border: none; background-color: transparent;">
+      <td style="border: none; padding: 4px 8px; font-weight: bold; color: #2c3e50; text-align: left;">Mata Kuliah</td>
+      <td style="border: none; padding: 4px 8px; color: #2c3e50;">:</td>
+      <td style="border: none; padding: 4px 8px; color: #2c3e50; text-align: left;">Proyek Sains Data IF-5B</td>
     </tr>
   </table>
 </div>
 
 ---
 
-##  Tentang Saya
+## Tentang Saya
 
 Halo! Saya adalah mahasiswa **Teknik Informatika** yang memiliki minat kuat di bidang **pengembangan web, pemrograman, dan data science**. Saya senang mempelajari bagaimana teknologi dapat digunakan untuk mengolah data menjadi informasi yang bermanfaat serta membangun aplikasi yang menyelesaikan permasalahan secara sistematis.
 
-###  Keahlian & Teknologi
+### Keahlian & Teknologi
 
 Berikut adalah beberapa teknologi dan tools yang biasa saya gunakan untuk menunjang pengerjaan proyek:
 
@@ -55,7 +48,3 @@ Berikut adalah beberapa teknologi dan tools yang biasa saya gunakan untuk menunj
 
 > **"Terus belajar, membangun proyek nyata, dan berkembang melalui praktik langsung."**
 > Bagi saya, pemahaman teknis bukan sekadar menghafal sintaks atau tools, melainkan kemampuan menganalisis masalah dan menciptakan solusi yang efektif serta berguna bagi banyak orang.
-
-
-
-
