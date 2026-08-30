@@ -29,7 +29,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install "jupyter-book<2"
+          pip install "jupyter-book==1"
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build the book
