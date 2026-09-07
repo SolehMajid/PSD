@@ -1,0 +1,5 @@
+1. crawling ulang,sesuai dengan kecamatan.
+2. menyelesaikan missing value dengan Teknik komputasi ( metode metode yang untuk meyelesaikan missing value ).
+3. sebelum melakukan missing value lakukan deteksi outlier. 
+4. datanya sudah bersih.
+5. 68 fitur dengan co dan jelaskan apa itu fiturnya tsfel. berikan penjelasan singkatnya juga rumusnya dan penjelasan singkatnya rumusnya.

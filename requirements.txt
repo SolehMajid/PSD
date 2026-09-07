@@ -5,3 +5,5 @@ numpy
 matplotlib
 requests
 scikit-learn
+openpyxl
+tsfel

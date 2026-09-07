@@ -93,10 +93,10 @@ Setiap titik pada polygon memiliki format `[longitude (bujur), latitude (lintang
 
 | Atribut | Nilai       | Keterangan                       |
 | ------- | ----------- | -------------------------------- |
-| `west`  | 112.6669403 | Longitude terkecil (batas kiri)  |
-| `east`  | 113.0865997 | Longitude terbesar (batas kanan) |
-| `south` | -7.2296572  | Latitude terkecil (batas bawah)  |
-| `north` | -6.8602645  | Latitude terbesar (batas atas)   |
+| `west`  | 112.6654991 | Longitude terkecil (batas kiri)  |
+| `east`  | 112.7995564 | Longitude terbesar (batas kanan) |
+| `south` | -7.1679391  | Latitude terkecil (batas bawah)  |
+| `north` | -7.0171347  | Latitude terbesar (batas atas)   |
 
 > **Catatan:** Untuk data Sentinel-5P, `spatial_extent` pada `load_collection` menggunakan _bounding box_ (kotak batas) yang dibentuk oleh `west`, `south`, `east`, `north`. Sedangkan `aoi` (polygon) digunakan pada tahap `aggregate_spatial` untuk menghitung rata-rata di dalam area tersebut.
 
@@ -111,10 +111,10 @@ s5 = connection.load_collection(
     "SENTINEL_5P_L2",
     temporal_extent=["2025-08-24", "2026-08-24"],
     spatial_extent={
-        "west": 112.6669403,
-        "south": -7.2296572,
-        "east": 113.0865997,
-        "north": -6.8602645,
+        "west": 112.6654991,
+        "south": -7.1679391,
+        "east": 112.7995564,
+        "north": -7.0171347,
     },
     bands=["NO2"],
 )
@@ -127,10 +127,10 @@ s5 = connection.load_collection(
     "SENTINEL_5P_L2",
     temporal_extent=["2025-08-24", "2026-08-24"],
     spatial_extent={
-        "west": 112.6669403,
-        "south": -7.2296572,
-        "east": 113.0865997,
-        "north": -6.8602645,
+        "west": 112.6654991,
+        "south": -7.1679391,
+        "east": 112.7995564,
+        "north": -7.0171347,
     },
     bands=["CO"],
 )
@@ -143,10 +143,10 @@ s5 = connection.load_collection(
     "SENTINEL_5P_L2",
     temporal_extent=["2025-08-24", "2026-08-24"],
     spatial_extent={
-        "west": 112.6669403,
-        "south": -7.2296572,
-        "east": 113.0865997,
-        "north": -6.8602645,
+        "west": 112.6654991,
+        "south": -7.1679391,
+        "east": 112.7995564,
+        "north": -7.0171347,
     },
     bands=["SO2"],
 )
@@ -159,10 +159,10 @@ s5 = connection.load_collection(
     "SENTINEL_5P_L2",
     temporal_extent=["2025-08-24", "2026-08-24"],
     spatial_extent={
-        "west": 112.6669403,
-        "south": -7.2296572,
-        "east": 113.0865997,
-        "north": -6.8602645,
+        "west": 112.6654991,
+        "south": -7.1679391,
+        "east": 112.7995564,
+        "north": -7.0171347,
     },
     bands=["CH4"],
 )
@@ -181,13 +181,15 @@ aoi = {
             "properties": {},
             "geometry": {
                 "type": "Polygon",
-                "coordinates": [[
-                    [112.6669403, -6.8602645],   # kiri-atas (NW)
-                    [113.0865997, -6.8602645],   # kanan-atas (NE)
-                    [113.0865997, -7.2296572],   # kanan-bawah (SE)
-                    [112.6669403,  -7.2296572],   # kiri-bawah (SW)
-                    [112.6669403, -6.8602645]    # kembali ke titik awal
-                ]]
+                "coordinates": [
+                    [
+                        [112.6654991, -7.0171347],
+                        [112.6912024, -7.1679391],
+                        [112.7995564, -7.0918788],
+                        [112.6993392, -7.0334062],
+                        [112.6654991, -7.0171347]
+                    ]
+                ]
             }
         }
     ]
@@ -250,11 +252,11 @@ aoi = {
                 "type": "Polygon",
                 "coordinates": [
                     [
-                        [112.6669403, -7.1613419],
-                        [113.0865997, -7.2296572],
-                        [113.0865997, -6.8602645],
-                        [112.6725233, -6.8602645],
-                        [112.6669403, -7.1613419]
+                        [112.6654991, -7.0171347],
+                        [112.6912024, -7.1679391],
+                        [112.7995564, -7.0918788],
+                        [112.6993392, -7.0334062],
+                        [112.6654991, -7.0171347]
                     ]
                 ]
             }
@@ -311,10 +313,10 @@ df_ch4.head()
 
 | tanggal | CH4 |
 | :--- | :--- |
-| 2025-08-24 | 1837.93 |
-| 2025-08-25 | 1878.62 |
+| 2025-08-24 | 1850.206787 |
+| 2025-08-25 | 1867.289429 |
 | 2025-08-26 | nan |
-| 2025-08-27 | 1883.38 |
+| 2025-08-27 | nan |
 | 2025-08-28 | nan |
 
 ### 3.2 CO
@@ -330,11 +332,11 @@ df_co.head()
 
 | tanggal | CO |
 | :--- | :--- |
-| 2025-08-24 | 0.0270707 |
-| 2025-08-25 | 0.0273832 |
-| 2025-08-26 | nan |
-| 2025-08-27 | 0.029246 |
-| 2025-08-28 | 0.0238982 |
+| 2025-08-24 | 0.032369 |
+| 2025-08-25 | 0.029644 |
+| 2025-08-27 | 0.028471 |
+| 2025-08-28 | 0.024230 |
+| 2025-08-29 | 0.027042 |
 
 ### 3.3 NO2
 
@@ -349,11 +351,11 @@ df_no2.head()
 
 | tanggal | NO2 |
 | :--- | :--- |
-| 2025-08-24 | 2.23196e-05 |
-| 2025-08-25 | 1.42877e-05 |
-| 2025-08-26 | 3.77646e-05 |
-| 2025-08-27 | 3.74734e-05 |
-| 2025-08-28 | 2.11309e-05 |
+| 2025-08-24 | 0.000030 |
+| 2025-08-25 | 0.000040 |
+| 2025-08-26 | 0.000046 |
+| 2025-08-28 | 0.000029 |
+| 2025-08-29 | 0.000029 |
 
 ### 3.4 SO2
 
@@ -362,17 +364,17 @@ df_no2.head()
 import pandas as pd
 
 # Menampilkan 5 data teratas CSV SO2
-df_so2 = pd.read_csv("../data/csv/polutan_SO2_bangkalan.csv")
+df_so2 = pd.read_csv("../data/csv/polutan_so2_bangkalan.csv")
 df_so2.head()
 ```
 
 | tanggal | SO2 |
 | :--- | :--- |
-| 2025-08-24 | 0.000194241 |
-| 2025-08-25 | 0.000263479 |
-| 2025-08-26 | -0.000107718 |
-| 2025-08-27 | 4.9277e-05 |
-| 2025-08-28 | 5.62931e-05 |
+| 2025-08-24 | 0.000544 |
+| 2025-08-25 | 0.000182 |
+| 2025-08-26 | -0.000258 |
+| 2025-08-27 | 0.000107 |
+| 2025-08-28 | -0.000066 |
 
 ### 3.5 Kenapa Ada Nilai NaN?
 
@@ -415,8 +417,8 @@ print("Valid values:", countValid)
 ```
 
 ```
-Jumlah missing value pada data ch4 : 286
-Jumlah data terisi (valid) pada data ch4 : 80
+Jumlah missing value pada data ch4 : 339
+Jumlah data terisi (valid) pada data ch4 : 27
 ```
 
 2. CO
@@ -434,8 +436,8 @@ print("Valid values:", countValid)
 ```
 
 ```
-Jumlah missing value pada data co : 92
-Jumlah data terisi (valid) pada data co : 274
+Jumlah missing value pada data co : 0
+Jumlah data terisi (valid) pada data co : 236
 ```
 
 3. NO2
@@ -453,15 +455,15 @@ print("Valid values:", countValid)
 ```
 
 ```
-Jumlah missing value pada data no2 : 77
-Jumlah data terisi (valid) pada data no2 : 289
+Jumlah missing value pada data no2 : 0
+Jumlah data terisi (valid) pada data no2 : 218
 ```
 
 4. SO2
 
 ```{code-cell}
 :tags: [hide-input]
-filepath = "../data/csv/polutan_SO2_bangkalan.csv"
+filepath = "../data/csv/polutan_so2_bangkalan.csv"
 
 df = pd.read_csv(filepath)
 
@@ -472,8 +474,8 @@ print("Valid values:", countValid)
 ```
 
 ```
-Jumlah missing value pada data so2 : 49
-Jumlah data terisi (valid) pada data so2 : 317
+Jumlah missing value pada data so2 : 0
+Jumlah data terisi (valid) pada data so2 : 249
 ```
 
 ### 4.2 Outliers
@@ -544,8 +546,8 @@ plt.show()
 ```
 
 ```
-Jumlah outlier pada data ch4 : 4
-Jumlah tidak outlier (normal) pada data ch4 : 76
+Jumlah outlier pada data ch4 : 2
+Jumlah tidak outlier (normal) pada data ch4 : 25
 ```
 
 2. CO
@@ -609,8 +611,8 @@ plt.show()
 ```
 
 ```
-Jumlah outlier pada data co : 14
-Jumlah tidak outlier (normal) pada data co : 260
+Jumlah outlier pada data co : 12
+Jumlah tidak outlier (normal) pada data co : 224
 ```
 
 3. NO2
@@ -674,8 +676,8 @@ plt.show()
 ```
 
 ```
-Jumlah outlier pada data no2 : 15
-Jumlah tidak outlier (normal) pada data no2 : 274
+Jumlah outlier pada data no2 : 11
+Jumlah tidak outlier (normal) pada data no2 : 207
 ```
 
 4. SO2
@@ -686,7 +688,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.ensemble import IsolationForest
 
-df = pd.read_csv("../data/csv/polutan_SO2_bangkalan.csv")
+df = pd.read_csv("../data/csv/polutan_so2_bangkalan.csv")
 df_clean = df.dropna(subset=['SO2']).copy()
 
 # Ubah tanggal
@@ -738,8 +740,8 @@ plt.show()
 ```
 
 ```
-Jumlah outlier pada data so2 : 16
-Jumlah tidak outlier (normal) pada data so2 : 301
+Jumlah outlier pada data so2 : 13
+Jumlah tidak outlier (normal) pada data so2 : 236
 ```
 
 ### 4.3 Noise
@@ -780,9 +782,9 @@ plt.show()
 ```
 
 ```
-Rata-rata noise       : -0.1933581042633004
-Standar deviasi noise : 38.668484837755
-RMSE noise            : 38.406809327053054
+Rata-rata noise       : 0.13775108839106343
+Standar deviasi noise : 18.647873806320245
+RMSE noise            : 18.198982745692533
 ```
 
 2. CO
@@ -817,9 +819,9 @@ plt.show()
 ```
 
 ```
-Rata-rata noise       : -1.261131274807339e-05
-Standar deviasi noise : 0.002097987131428739
-RMSE noise            : 0.002094107293050283
+Rata-rata noise       : -2.1676236559206584e-05
+Standar deviasi noise : 0.0025884577022468784
+RMSE noise            : 0.0025829154473703177
 ```
 
 3. NO2
@@ -854,9 +856,9 @@ plt.show()
 ```
 
 ```
-Rata-rata noise       : -8.916937661593246e-09
-Standar deviasi noise : 8.026398260115996e-06
-RMSE noise            : 8.012209756884019e-06
+Rata-rata noise       : -8.797525892828011e-08
+Standar deviasi noise : 1.8697081577541818e-05
+RMSE noise            : 1.86531400264127e-05
 ```
 
 4. SO2
@@ -867,7 +869,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("../data/csv/polutan_SO2_bangkalan.csv")
+df = pd.read_csv("../data/csv/polutan_so2_bangkalan.csv")
 df_clean = df.dropna(subset=['SO2']).copy()
 df_clean['tanggal'] = pd.to_datetime(df_clean['tanggal'])
 
@@ -891,9 +893,9 @@ plt.show()
 ```
 
 ```
-Rata-rata noise       : 4.1704318768194803e-07
-Standar deviasi noise : 0.00011053066126383483
-RMSE noise            : 0.00011035360419655328
+Rata-rata noise       : 9.77278029500097e-07
+Standar deviasi noise : 0.00018049803864521538
+RMSE noise            : 0.00018012891172158437
 ```
 
 ---
@@ -1002,10 +1004,10 @@ Berdasarkan hasil pengumpulan, eksplorasi, dan identifikasi kualitas data kualit
 
 | Polutan | Total Baris | Missing Values (NaN) | Data Terisi (Valid) | Outliers Terdeteksi (5%) | Standar Deviasi Noise | Status Kualitas Data            |
 | :------ | :---------- | :------------------- | :------------------ | :----------------------- | :-------------------- | :------------------------------ |
-| **CH4** | 366         | 286 (78.14%)         | 80 (21.86%)         | 4                        | 38.6685               | Celah Data Cukup Besar          |
-| **CO**  | 366         | 92 (25.14%)          | 274 (74.86%)        | 14                       | 0.0021                | Cukup Baik                      |
-| **NO2** | 366         | 77 (21.04%)          | 289 (78.96%)        | 15                       | 8.0264e-06            | Baik                            |
-| **SO2** | 366         | 49 (13.39%)          | 317 (86.61%)        | 16                       | 0.00011               | Sangat Baik                     |
+| **CH4** | 366         | 339 (92.62%)         | 27 (7.38%)          | 2                        | 18.6479               | Celah Data Cukup Besar          |
+| **CO**  | 236         | 0 (0.00%)            | 236 (100.00%)       | 12                       | 0.0026                | Cukup Baik                      |
+| **NO2** | 218         | 0 (0.00%)            | 218 (100.00%)       | 11                       | 1.8697e-05            | Baik                            |
+| **SO2** | 249         | 0 (0.00%)            | 249 (100.00%)       | 13                       | 0.00018               | Sangat Baik                     |
 
 ---
 
