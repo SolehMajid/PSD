@@ -364,7 +364,7 @@ df_no2.head()
 import pandas as pd
 
 # Menampilkan 5 data teratas CSV SO2
-df_so2 = pd.read_csv("../data/csv/polutan_so2_bangkalan.csv")
+df_so2 = pd.read_csv("../data/csv/polutan_so2_bangkalan.csv").dropna(subset=['SO2'])
 df_so2.head()
 ```
 
