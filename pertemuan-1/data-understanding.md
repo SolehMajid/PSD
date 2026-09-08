@@ -18,6 +18,25 @@ Data Understanding adalah tahap untuk **mengumpulkan**, **mengeksplorasi**, dan 
 
 ---
 
+## Berkas Terkait di Folder `pertemuan-1`
+
+Seluruh proses pada tahap *Data Understanding* diorganisasikan ke dalam berkas-berkas terpisah di dalam folder `pertemuan-1`:
+
+| Berkas / File | Jenis | Peran dalam Tahap Data Understanding |
+| :------------ | :---- | :----------------------------------- |
+| [`1.zat-ch4.ipynb`](1.zat-ch4.ipynb) | Jupyter Notebook | Penarikan data satelit Sentinel-5P (openEO) polutan Metana (CH₄), batch job NetCDF, dan ekspor dataset CSV lengkap 366 hari. |
+| [`1.zat-co.ipynb`](1.zat-co.ipynb) | Jupyter Notebook | Penarikan data satelit Sentinel-5P (openEO) polutan Karbon Monoksida (CO), batch job NetCDF, dan ekspor dataset CSV lengkap 366 hari. |
+| [`1.zat-no2.ipynb`](1.zat-no2.ipynb) | Jupyter Notebook | Penarikan data satelit Sentinel-5P (openEO) polutan Nitrogen Dioksida (NO₂), batch job NetCDF, dan ekspor dataset CSV lengkap 366 hari. |
+| [`1.zat-so2.ipynb`](1.zat-so2.ipynb) | Jupyter Notebook | Penarikan data satelit Sentinel-5P (openEO) polutan Sulfur Dioksida (SO₂), batch job NetCDF, dan ekspor dataset CSV lengkap 366 hari. |
+| [`code-map.ipynb`](code-map.ipynb) | Jupyter Notebook | Visualisasi peta interaktif batas wilayah pengamatan (*Area of Interest* / AOI) Kabupaten Bangkalan menggunakan Folium. |
+| [`code-cekms.ipynb`](code-cekms.ipynb) | Jupyter Notebook | Identifikasi dan kalkulasi nilai hilang (*missing values* / NaN) pada masing-masing data CSV polutan. |
+| [`code-cejoutl.ipynb`](code-cejoutl.ipynb) | Jupyter Notebook | Identifikasi nilai pencilan (*outliers*) menggunakan algoritma *Isolation Forest* (kontaminasi 5%) beserta visualisasi scatter plot. |
+| [`code-ceknoise.ipynb`](code-ceknoise.ipynb) | Jupyter Notebook | Analisis derau (*noise*) data deret waktu menggunakan peredaman *Moving Average* 7 hari beserta kalkulasi rata-rata, standar deviasi, dan RMSE. |
+| [`business-understanding.md`](business-understanding.md) | Markdown | Dokumentasi latar belakang proyek, perumusan masalah, dan karakteristik 4 polutan utama. |
+| [`polutan-kabupaten-Bangkalan.md`](polutan-kabupaten-Bangkalan.md) | Markdown | Berkas halaman utama modul pertemuan-1 dan pengantar alur analisis kualitas udara. |
+
+---
+
 ## Library Python yang Diperlukan
 
 Berikut adalah library Python beserta kegunaannya untuk mengerjakan proses data understanding ini:
@@ -102,7 +121,7 @@ Setiap titik pada polygon memiliki format `[longitude (bujur), latitude (lintang
 
 ### 1.4 Memuat Data (Load Collection)
 
-Data dimuat **per polutan**, karena server Sentinel-5P di openEO hanya mendukung **satu band per proses**. Oleh karena itu dibuat **4 notebook terpisah** (`1.zat-no2.ipynb`, `1.zat-co.ipynb`, `1.zat-so2.ipynb`, `1.zat-ch4.ipynb`), masing-masing untuk satu polutan.
+Data dimuat **per polutan**, karena server Sentinel-5P di openEO hanya mendukung **satu band per proses**. Oleh karena itu dibuat **4 notebook terpisah** ([`1.zat-no2.ipynb`](1.zat-no2.ipynb), [`1.zat-co.ipynb`](1.zat-co.ipynb), [`1.zat-so2.ipynb`](1.zat-so2.ipynb), [`1.zat-ch4.ipynb`](1.zat-ch4.ipynb)), masing-masing untuk satu polutan.
 
 #### a. Memuat Data NO2
 
@@ -216,12 +235,12 @@ job = s5.execute_batch(title="NO2 Bangkalan", outputfile="../data/nc/polutan_NO2
 
 Setiap batch job membutuhkan beberapa menit (antre di server). Hasilnya disimpan pada folder **`data/nc/`**:
 
-| Polutan | File NetCDF                     |
-| ------- | ------------------------------- |
-| NO2     | `data/nc/polutan_NO2_bangkalan.nc` |
-| CO      | `data/nc/polutan_co_bangkalan.nc`  |
-| SO2     | `data/nc/polutan_SO2_bangkalan.nc` |
-| CH4     | `data/nc/polutan_CH4_bangkalan.nc` |
+| Polutan | Berkas Notebook Asal | File NetCDF Hasil Batch Job |
+| :------ | :------------------- | :-------------------------- |
+| **NO2** | [`1.zat-no2.ipynb`](1.zat-no2.ipynb) | `data/nc/polutan_NO2_bangkalan.nc` |
+| **CO**  | [`1.zat-co.ipynb`](1.zat-co.ipynb)  | `data/nc/polutan_co_bangkalan.nc`  |
+| **SO2** | [`1.zat-so2.ipynb`](1.zat-so2.ipynb) | `data/nc/polutan_SO2_bangkalan.nc` |
+| **CH4** | [`1.zat-ch4.ipynb`](1.zat-ch4.ipynb) | `data/nc/polutan_CH4_bangkalan.nc` |
 
 Proses crawling data. Notebook tersebut menjalankan **batch job** di server openEO, dan hasilnya dapat **dipantau (monitoring) melalui openEO Web Editor**.
 
@@ -231,6 +250,69 @@ Proses crawling data. Notebook tersebut menjalankan **batch job** di server open
 
 Pantauan batch job pada openEO Web Editor. Bisa dilihat langsung di https://editor.openeo.org/.
 ```
+
+### 1.8 Ekspor Data NetCDF (.nc) ke Tabular CSV (Lengkap 366 Hari)
+
+Setelah proses batch job selesai dan file NetCDF tersimpan di folder `data/nc/`, setiap notebook polutan ([`1.zat-no2.ipynb`](1.zat-no2.ipynb), [`1.zat-co.ipynb`](1.zat-co.ipynb), [`1.zat-so2.ipynb`](1.zat-so2.ipynb), [`1.zat-ch4.ipynb`](1.zat-ch4.ipynb)) menjalankan proses konversi ke format tabular `.csv`.
+
+Proses ini mengekstrak data tanggal (`tanggal`) dan nilai konsentrasi polutan, serta melengkapi seluruh rentang tanggal harian dari **24 Agustus 2025 sampai 24 Agustus 2026** (total **366 hari**). Tanggal yang tidak memiliki rekaman satelit dibiarkan bernilai `NaN` (*missing values*) agar struktur waktu deret waktu (*time-series*) tetap utuh.
+
+```python
+import os
+import shutil
+import tempfile
+import xarray as xr
+import pandas as pd
+
+# Konfigurasi path file input (.nc) dan output (.csv)
+nc_file_path = "../data/nc/polutan_NO2_bangkalan.nc"
+csv_file_path = "../data/csv/polutan_no2_bangkalan.csv"
+
+is_temp = False
+try:
+    ds = xr.open_dataset(nc_file_path, engine="netcdf4")
+except Exception:
+    temp_dir = tempfile.gettempdir()
+    temp_nc_path = os.path.join(temp_dir, "temp_NO2_bangkalan.nc")
+    shutil.copy2(nc_file_path, temp_nc_path)
+    ds = xr.open_dataset(temp_nc_path, engine="netcdf4")
+    is_temp = True
+
+# 1. Konversi dataset NetCDF ke Pandas DataFrame
+df_raw = ds.to_dataframe().reset_index()
+
+# 2. Ambil data tanggal ('t') dan nilai polutan ('NO2')
+df_raw['tanggal'] = pd.to_datetime(df_raw['t']).dt.strftime('%Y-%m-%d')
+no2_data = dict(zip(df_raw['tanggal'], df_raw['NO2']))
+
+# 3. Buat deret tanggal lengkap dari 2025-08-24 sampai 2026-08-24 (366 hari)
+full_dates = pd.date_range(start="2025-08-24", end="2026-08-24", freq="D")
+
+# 4. Buat DataFrame baru dengan semua tanggal
+df_result = pd.DataFrame({
+    "tanggal": full_dates.strftime("%Y-%m-%d")
+})
+
+# 5. Petakan nilai NO2 ke tanggal yang sesuai
+df_result["NO2"] = df_result["tanggal"].map(no2_data)
+
+# 6. Simpan hasil ke file CSV
+os.makedirs(os.path.dirname(csv_file_path), exist_ok=True)
+df_result.to_csv(csv_file_path, index=False)
+
+ds.close()
+if is_temp:
+    try:
+        os.remove(temp_nc_path)
+    except Exception:
+        pass
+```
+
+Hasil akhir dari tahap pengumpulan dan ekspor ini adalah 4 berkas CSV di folder `data/csv/` yang masing-masing memiliki 366 baris data:
+- `data/csv/polutan_no2_bangkalan.csv` (dihasilkan oleh [`1.zat-no2.ipynb`](1.zat-no2.ipynb))
+- `data/csv/polutan_co_bangkalan.csv` (dihasilkan oleh [`1.zat-co.ipynb`](1.zat-co.ipynb))
+- `data/csv/polutan_so2_bangkalan.csv` (dihasilkan oleh [`1.zat-so2.ipynb`](1.zat-so2.ipynb))
+- `data/csv/polutan_ch4_bangkalan.csv` (dihasilkan oleh [`1.zat-ch4.ipynb`](1.zat-ch4.ipynb))
 
 ---
 
@@ -334,9 +416,9 @@ df_co.head()
 | :--- | :--- |
 | 2025-08-24 | 0.032369 |
 | 2025-08-25 | 0.029644 |
+| 2025-08-26 | nan |
 | 2025-08-27 | 0.028471 |
 | 2025-08-28 | 0.024230 |
-| 2025-08-29 | 0.027042 |
 
 ### 3.3 NO2
 
@@ -354,8 +436,8 @@ df_no2.head()
 | 2025-08-24 | 0.000030 |
 | 2025-08-25 | 0.000040 |
 | 2025-08-26 | 0.000046 |
+| 2025-08-27 | nan |
 | 2025-08-28 | 0.000029 |
-| 2025-08-29 | 0.000029 |
 
 ### 3.4 SO2
 
@@ -364,7 +446,7 @@ df_no2.head()
 import pandas as pd
 
 # Menampilkan 5 data teratas CSV SO2
-df_so2 = pd.read_csv("../data/csv/polutan_so2_bangkalan.csv").dropna(subset=['SO2'])
+df_so2 = pd.read_csv("../data/csv/polutan_so2_bangkalan.csv")
 df_so2.head()
 ```
 
@@ -378,7 +460,7 @@ df_so2.head()
 
 ### 3.5 Kenapa Ada Nilai NaN?
 
-Perhatikan pada hasil data di atas, ada beberapa baris yang menunjukkan nilai **NaN** (Not a Number). Artinya, pada tanggal tersebut **tidak ada data pengamatan** yang tercatat.
+Perhatikan pada hasil data di atas, terdapat beberapa baris yang menunjukkan nilai **NaN** (Not a Number) seperti pada CH4 (tanggal 26–28 Agustus 2025), CO (tanggal 26 Agustus 2025), dan NO2 (tanggal 27 Agustus 2025). Artinya, pada tanggal tersebut **tidak ada data pengamatan** yang tercatat.
 
 Penyebab munculnya NaN pada data satelit Sentinel-5P antara lain:
 
@@ -386,9 +468,9 @@ Penyebab munculnya NaN pada data satelit Sentinel-5P antara lain:
 
 2. **Tutupan awan (cloud cover)** — Sentinel-5P menggunakan sensor optik/atmosferik yang hasilnya dipengaruhi oleh kondisi cuaca. Jika area tertutup awan tebal, data tidak dapat diukur sehingga dianggap kosong.
 
-3. **Validasi kualitas (quality flag)** — data yang kualitasnya buruk (misal karena noise instrumen) disaring keluar oleh sistem quality assurance agar tidak mendistorsi analisis, menghasilkan celah (gap) pada deret waktu.
+3. **Validasi kualitas (quality flag)** — data yang kualitasnya buruk (misal karena noise instrumen atau sudut pantulan surya ekstrem) disaring keluar oleh sistem quality assurance agar tidak mendistorsi analisis, menghasilkan celah (gap) pada deret waktu.
 
-Karena itu, dari total **366 hari** dalam setahun, tidak semua tanggal memiliki nilai polutan. Hari-hari yang kosong inilah yang tampil sebagai **NaN** — dan ini akan dibahas lebih lanjut pada tahap **identifikasi _missing values_** di bagian selanjutnya.
+Karena itu, dari total **366 hari** dalam setahun (24 Agustus 2025 hingga 24 Agustus 2026), tidak semua tanggal memiliki nilai polutan. Hari-hari yang kosong inilah yang tampil sebagai **NaN** — dan ini dibahas secara komprehensif pada tahap **identifikasi _missing values_** di bagian selanjutnya.
 
 ---
 
@@ -398,7 +480,7 @@ Pada tahap ini dilakukan **identifikasi** (mencatat) masalah-masalah pada data, 
 
 ### 4.1 Missing Values
 
-**Missing values** adalah tanggal yang tidak memiliki nilai polutan (NaN). Identifikasi missing value dilakukan menggunakan berkas [code-ms.ipynb](code-cekms.ipynb). Berikut identifikasinya:
+**Missing values** adalah tanggal yang tidak memiliki nilai polutan (NaN). Identifikasi missing value dilakukan menggunakan berkas [`code-cekms.ipynb`](code-cekms.ipynb). Berikut identifikasinya:
 
 1. CH4
 
@@ -417,14 +499,16 @@ print("Valid values:", countValid)
 ```
 
 ```
-Jumlah missing value pada data ch4 : 339
-Jumlah data terisi (valid) pada data ch4 : 27
+Missing values: 339
+Valid values: 27
 ```
 
 2. CO
 
 ```{code-cell}
 :tags: [hide-input]
+import pandas as pd
+
 filepath = "../data/csv/polutan_co_bangkalan.csv"
 
 df = pd.read_csv(filepath)
@@ -436,14 +520,16 @@ print("Valid values:", countValid)
 ```
 
 ```
-Jumlah missing value pada data co : 0
-Jumlah data terisi (valid) pada data co : 236
+Missing values: 130
+Valid values: 236
 ```
 
 3. NO2
 
 ```{code-cell}
 :tags: [hide-input]
+import pandas as pd
+
 filepath = "../data/csv/polutan_no2_bangkalan.csv"
 
 df = pd.read_csv(filepath)
@@ -455,14 +541,16 @@ print("Valid values:", countValid)
 ```
 
 ```
-Jumlah missing value pada data no2 : 0
-Jumlah data terisi (valid) pada data no2 : 218
+Missing values: 148
+Valid values: 218
 ```
 
 4. SO2
 
 ```{code-cell}
 :tags: [hide-input]
+import pandas as pd
+
 filepath = "../data/csv/polutan_so2_bangkalan.csv"
 
 df = pd.read_csv(filepath)
@@ -474,13 +562,22 @@ print("Valid values:", countValid)
 ```
 
 ```
-Jumlah missing value pada data so2 : 0
-Jumlah data terisi (valid) pada data so2 : 249
+Missing values: 117
+Valid values: 249
 ```
+
+#### Ringkasan Temuan Missing Values (Total 366 Hari):
+
+| Polutan | Berkas CSV | Missing Values (NaN) | Persentase Missing | Nilai Terisi (Valid) | Persentase Valid |
+| :------ | :--------- | :------------------- | :----------------- | :------------------- | :--------------- |
+| **CH4** | `polutan_ch4_bangkalan.csv` | 339 | 92.62% | 27  | 7.38%  |
+| **CO**  | `polutan_co_bangkalan.csv`  | 130 | 35.52% | 236 | 64.48% |
+| **NO2** | `polutan_no2_bangkalan.csv` | 148 | 40.44% | 218 | 59.56% |
+| **SO2** | `polutan_so2_bangkalan.csv` | 117 | 31.97% | 249 | 68.03% |
 
 ### 4.2 Outliers
 
-**Outliers** (pencilan) adalah nilai pengamatan yang menyimpang secara signifikan dari mayoritas data dalam suatu variabel. Deteksi outlier dilakukan menggunakan algoritma **Isolation Forest** dengan tingkat kontaminasi (`contamination`) sebesar **0.05** (5%) pada berkas [code-cejoutl.ipynb](code-cejoutl.ipynb).
+**Outliers** (pencilan) adalah nilai pengamatan yang menyimpang secara signifikan dari mayoritas data dalam suatu variabel. Deteksi outlier dilakukan menggunakan algoritma **Isolation Forest** dengan tingkat kontaminasi (`contamination`) sebesar **0.05** (5%) pada berkas [`code-cejoutl.ipynb`](code-cejoutl.ipynb).
 
 Sebelum deteksi outlier dilakukan, data bernilai kosong (_missing values_ / `NaN`) dibuang terlebih dahulu (`dropna()`) agar populasi perhitungan pencilan selaras.
 
@@ -746,7 +843,7 @@ Jumlah tidak outlier (normal) pada data so2 : 236
 
 ### 4.3 Noise
 
-**Noise** (derau) adalah fluktuasi acak frekuensi tinggi pada data pengamatan yang disebabkan oleh kondisi dinamika atmosfer mikro, keterbatasan presisi instrumen satelit, atau interferensi cuaca lokal. Noise dihitung berdasarkan selisih antara nilai aktual dengan nilai rata-rata bergerak 7 hari (`noise = aktual - trend`). Analisis ini dijalankan pada berkas [code-ceknoise.ipynb](code-ceknoise.ipynb).
+**Noise** (derau) adalah fluktuasi acak frekuensi tinggi pada data pengamatan yang disebabkan oleh kondisi dinamika atmosfer mikro, keterbatasan presisi instrumen satelit, atau interferensi cuaca lokal. Noise dihitung berdasarkan selisih antara nilai aktual dengan nilai rata-rata bergerak 7 hari (`noise = aktual - trend`). Analisis ini dijalankan pada berkas [`code-ceknoise.ipynb`](code-ceknoise.ipynb).
 
 Berikut adalah hasil analisis noise untuk masing-masing polutan:
 
@@ -919,7 +1016,7 @@ import matplotlib.pyplot as plt
 df_no2 = pd.read_csv("../data/csv/polutan_no2_bangkalan.csv").dropna(subset=['NO2'])
 df_co  = pd.read_csv("../data/csv/polutan_co_bangkalan.csv").dropna(subset=['CO'])
 df_ch4 = pd.read_csv("../data/csv/polutan_ch4_bangkalan.csv").dropna(subset=['CH4'])
-df_so2 = pd.read_csv("../data/csv/polutan_SO2_bangkalan.csv").dropna(subset=['SO2'])
+df_so2 = pd.read_csv("../data/csv/polutan_so2_bangkalan.csv").dropna(subset=['SO2'])
 
 df_no2['tanggal'] = pd.to_datetime(df_no2['tanggal'])
 df_co['tanggal']  = pd.to_datetime(df_co['tanggal'])
@@ -1000,14 +1097,14 @@ plt.show()
 
 ## 5. Kesimpulan dan Rencana Tahap Data Preparation
 
-Berdasarkan hasil pengumpulan, eksplorasi, dan identifikasi kualitas data kualitas udara Kabupaten Bangkalan (Sentinel-5P L2), diperoleh ringkasan evaluasi kualitas data sebagai berikut:
+Berdasarkan hasil pengumpulan data melalui openEO, eksplorasi, dan identifikasi kualitas data kualitas udara Kabupaten Bangkalan (Sentinel-5P L2), diperoleh ringkasan evaluasi kualitas data sebagai berikut:
 
-| Polutan | Total Baris | Missing Values (NaN) | Data Terisi (Valid) | Outliers Terdeteksi (5%) | Standar Deviasi Noise | Status Kualitas Data            |
-| :------ | :---------- | :------------------- | :------------------ | :----------------------- | :-------------------- | :------------------------------ |
-| **CH4** | 366         | 339 (92.62%)         | 27 (7.38%)          | 2                        | 18.6479               | Celah Data Cukup Besar          |
-| **CO**  | 236         | 0 (0.00%)            | 236 (100.00%)       | 12                       | 0.0026                | Cukup Baik                      |
-| **NO2** | 218         | 0 (0.00%)            | 218 (100.00%)       | 11                       | 1.8697e-05            | Baik                            |
-| **SO2** | 249         | 0 (0.00%)            | 249 (100.00%)       | 13                       | 0.00018               | Sangat Baik                     |
+| Polutan | Berkas Notebook Sumber | Total Baris | Missing Values (NaN) | Nilai Terisi (Valid) | Outliers Terdeteksi (5%) | Standar Deviasi Noise | Status Kualitas Data |
+| :------ | :--------------------- | :---------- | :------------------- | :------------------- | :----------------------- | :-------------------- | :------------------- |
+| **CH4** | [`1.zat-ch4.ipynb`](1.zat-ch4.ipynb) | 366 | 339 (92.62%) | 27 (7.38%) | 2 | 18.6479 | Celah Data Sangat Besar (Perlu Imputasi Intensif) |
+| **CO**  | [`1.zat-co.ipynb`](1.zat-co.ipynb)   | 366 | 130 (35.52%) | 236 (64.48%) | 12 | 0.0026 | Cukup Baik (35.52% Missing) |
+| **NO2** | [`1.zat-no2.ipynb`](1.zat-no2.ipynb) | 366 | 148 (40.44%) | 218 (59.56%) | 11 | 1.8697e-05 | Baik (40.44% Missing) |
+| **SO2** | [`1.zat-so2.ipynb`](1.zat-so2.ipynb) | 366 | 117 (31.97%) | 249 (68.03%) | 13 | 0.00018 | Cukup Baik (31.97% Missing) |
 
 ---
 
@@ -1016,10 +1113,10 @@ Berdasarkan hasil pengumpulan, eksplorasi, dan identifikasi kualitas data kualit
 Temuan kualitas data di atas menjadi dasar utama dalam menyusun strategi pemrosesan pada tahap **Data Preparation** berikutnya:
 
 1. **Imputasi Missing Values (_Time-Series Imputation_)**:
-   - Celah tanggal kosong (terutama pada CH4 dan CO) akan diisi menggunakan teknik interpolasi linier (_linear interpolation_) atau _forward/backward fill_ agar deret waktu menjadi berkesinambungan harian.
+   - Seluruh polutan memiliki celah tanggal kosong dalam rentang 366 hari: CH4 (92.62%), NO2 (40.44%), CO (35.52%), dan SO2 (31.97%). Tanggal kosong ini akan diisi menggunakan teknik interpolasi linier (_linear interpolation_) atau pemodelan deret waktu agar deret waktu harian menjadi utuh dan berkesinambungan.
 
 2. **Penanganan Outliers (_Outlier Treatment_)**:
-   - Nilai pencilan ekstrem hasil deteksi _Isolation Forest_ akan ditangani menggunakan teknik _winsorization_ (membatasi nilai ke rentang persentil tertentu) atau imputasi nilai batas wajar agar tidak menggangu pemodelan.
+   - Nilai pencilan ekstrem hasil deteksi _Isolation Forest_ (CH4: 2, CO: 12, NO2: 11, SO2: 13) pada berkas [`code-cejoutl.ipynb`](code-cejoutl.ipynb) akan ditangani menggunakan teknik _winsorization_ (membatasi nilai ke rentang persentil tertentu) atau penggantian nilai batas wajar agar tidak mendistorsi model analitis selanjutnya.
 
 3. **Penghalusan Derau (_Noise Smoothing_)**:
-   - Menerapkan fungsi _Moving Average_ (rata-rata bergerak 7 hari / 30 hari) untuk meredam fluktuasi acak frekuensi tinggi, sehingga tren perubahan pola polusi udara di Kabupaten Bangkalan dapat dianalisis secara akurat dan konsisten.
+   - Menerapkan fungsi _Moving Average_ (rata-rata bergerak 7 hari / 30 hari) seperti diuji pada berkas [`code-ceknoise.ipynb`](code-ceknoise.ipynb) untuk meredam fluktuasi acak frekuensi tinggi, sehingga tren perubahan pola polusi udara di Kabupaten Bangkalan dapat dianalisis secara akurat dan konsisten.
