@@ -140,8 +140,7 @@ Setelah koneksi berstatus hijau (terhubung), *port* koneksi dihubungkan ke node 
 SELECT * FROM public.hasil_polutan;
 ```
 
-Hasil eksekusi node ini menghasilkan tabel data dengan **366 baris (rows)** dan **6 kolom (columns)**:
-- `id` (Integer)
+Hasil eksekusi node ini menghasilkan tabel data dengan **366 baris (rows)** dan **5 kolom (columns)**:
 - `tanggal` (Date)
 - `ch4` (Float)
 - `co` (Float)
@@ -165,121 +164,199 @@ Data yang telah diambil kemudian dialirkan ke node **Statistics**. Node ini seca
 :width: 100%
 :align: center
 
-Workflow KNIME (`PostgreSQL Connector` -> `DB Query Reader` -> `Statistics`) Beserta Tabel Ringkasan Statistik.
+Workflow KNIME (`PostgreSQL Connector` -> `DB Query Reader` -> `Statistics`) Beserta Tabel Ringkasan Statistik Deskriptif.
 ```
 
 ### 3.1 Tabel Ringkasan Statistik Deskriptif (KNIME)
 
-Berdasarkan hasil eksekusi node **Statistics** pada KNIME, diperoleh ringkasan data sebagai berikut:
+Berdasarkan hasil eksekusi node **Statistics** pada KNIME (sebagaimana terlihat pada gambar antarmuka di atas), diperoleh ringkasan data statistik deskriptif untuk keempat gas polutan:
+
+#### Tabel Ringkasan Lengkap (KNIME Statistics Table)
 
 | Column | Min | Max | Mean | Std. deviation | Variance | Skewness | Kurtosis | Overall sum | No. missings | No. NaNs | No. +$\infty$ | No. -$\infty$ | Median | Row count |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **id** | 1 | 366 | 183.5 | 105.799 | 11,193.5 | 0 | -1.2 | 67,161 | 0 | 0 | 0 | 0 | *(?)* | 366 |
-| **ch4** | 1,632.623 | 1,934.86 | 1,868.202 | 43.644 | 1,904.78 | -2.431 | 10.171 | 149,456.129 | 286 | 0 | 0 | 0 | *(?)* | 366 |
-| **co** | 0.02 | 0.044 | 0.029 | 0.003 | 0 | 0.887 | 2.65 | 7.843 | 92 | 0 | 0 | 0 | *(?)* | 366 |
-| **no2** | 0 | 0 | 0 | 0 | 0 | 2.113 | 14.554 | 0.007 | 77 | 0 | 0 | 0 | *(?)* | 366 |
-| **so2** | -0.001 | 0.001 | 0 | 0 | 0 | -1.241 | 15.298 | 0.012 | 49 | 0 | 0 | 0 | *(?)* | 366 |
+| **ch4** | 1,841.516 | 1,916.853 | 1,886.025 | 19.885 | 395.419 | -0.711 | -0.007 | 50,922.664 | 339 | 0 | 0 | 0 | *(?)* | 366 |
+| **co** | 0.02 | 0.044 | 0.029 | 0.003 | 0 | 0.703 | 1.961 | 6.803 | 130 | 0 | 0 | 0 | *(?)* | 366 |
+| **no2** | 0 | 0 | 0 | 0 | 0 | 3.924 | 27.942 | 0.008 | 148 | 0 | 0 | 0 | *(?)* | 366 |
+| **so2** | -0.001 | 0.001 | 0 | 0 | 0 | 0.437 | 1.462 | 0.016 | 117 | 0 | 0 | 0 | *(?)* | 366 |
 
-> **Catatan Penting Mengenai Nilai Median di KNIME:**
-> Pada gambar antarmuka KNIME di atas, kolom **Median** ditandai dengan ikon tanda tanya merah `(?)`. Hal ini terjadi karena secara *default*, opsi dialog konfigurasi **"Calculate median values (computationally expensive)"** dalam keadaan **tidak dicentang (unchecked)**. 
-> 
-> Penghitungan median memerlukan proses pengurutan (*sorting*) seluruh baris data dalam memori, yang pada dataset berskala besar (*big data*) membutuhkan alokasi memori dan waktu komputasi yang tinggi. Oleh karena itu, KNIME menjadikannya opsi opsional. Pada modul ini, nilai median tetap dihitung secara presisi melalui validasi perhitungan manual dan Microsoft Excel.
+> **Catatan Penting Mengenai Tampilan Nilai di KNIME:**
+> 1. **Kolom Median:** Pada gambar antarmuka KNIME di atas, kolom **Median** ditandai dengan ikon tanda tanya merah `(?)`. Hal ini terjadi karena secara *default*, opsi dialog konfigurasi **"Calculate median values (computationally expensive)"** dalam keadaan **tidak dicentang (unchecked)** guna menghemat alokasi memori dan waktu komputasi pengurutan data (*sorting*). Nilai median divalidasi dan dihitung secara akurat pada Microsoft Excel dan simulasi manual.
+> 2. **Pembulatan Desimal Angka Nol (`0`):** Pada gas `no2` dan `so2`, tabel ringkasan KNIME menampilkan angka `0` pada *Min, Max, Mean, Std. deviation,* dan *Variance* karena format antarmuka KNIME secara default menerapkan pembulatan 3 digit desimal di belakang koma ($0.000$). Nilai sebenarnya berada pada skala mikro/ilmiah (misalnya rata-rata NO₂ adalah $3.56 \times 10^{-5}\ \text{mol/m}^2$ dan SO₂ adalah $6.58 \times 10^{-5}\ \text{mol/m}^2$) sebagaimana divalidasi dengan presisi tinggi pada Microsoft Excel.
+
+#### Pengelompokan Metrik Terstruktur
+
+Agar data statistik deskriptif di atas lebih mudah dibaca, dianalisis, dan dipahami karakteristiknya, berikut adalah penyajian metrik yang dikelompokkan ke dalam tiga kategori utama:
+
+##### 1. Ukuran Pemusatan & Penyebaran Data (Central Tendency & Dispersion)
+
+Tabel ini merangkum rentang batas nilai, titik pusat distribusi, serta tingkat variabilitas konsentrasi gas polutan:
+
+| Variabel | Satuan | Nilai Minimum | Nilai Maksimum | Mean ($\bar{x}$) | Median (Excel) | Std. Deviation ($s$) | Variansi ($s^2$) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **CH₄ (Metana)** | ppb | 1,841.516 | 1,916.853 | 1,886.025 | 1,886.851 | 19.885 | 395.419 |
+| **CO (Karbon Monoksida)** | $\text{mol/m}^2$ | 0.020 | 0.044 | 0.029 | 0.029 | 0.003 | $1.01 \times 10^{-5}$ |
+| **NO₂ (Nitrogen Dioksida)** | $\text{mol/m}^2$ | $5.23 \times 10^{-6}$ | $2.46 \times 10^{-4}$ | $3.56 \times 10^{-5}$ | $3.15 \times 10^{-5}$ | $2.40 \times 10^{-5}$ | $5.78 \times 10^{-10}$ |
+| **SO₂ (Sulfur Dioksida)** | $\text{mol/m}^2$ | -0.00052 | 0.00081 | $6.58 \times 10^{-5}$ | $5.17 \times 10^{-5}$ | 0.000203 | $4.13 \times 10^{-8}$ |
+
+##### 2. Bentuk Kurva Distribusi & Nilai Akumulasi (Shape & Overall Sum)
+
+Tabel ini mengidentifikasi derajat kemiringan, keruncingan kurva, kecenderungan pencilan (*outliers*), dan akumulasi total polutan:
+
+| Variabel | Skewness ($G_1$) | Klasifikasi Kemiringan | Kurtosis ($G_2$) | Klasifikasi Keruncingan | Overall Sum |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **CH₄ (Metana)** | -0.711 | Negatif (*Left-skewed*) | -0.007 | Mesokurtik (Mendekati Normal) | 50,922.664 |
+| **CO (Karbon Monoksida)** | +0.703 | Positif (*Right-skewed*) | +1.961 | Leptokurtik (Cukup Runcing) | 6.803 |
+| **NO₂ (Nitrogen Dioksida)** | +3.924 | Positif Kuat (*Right-skewed*) | +27.942 | Leptokurtik Ekstrem (*Heavy Tails*) | 0.008 |
+| **SO₂ (Sulfur Dioksida)** | +0.437 | Positif (*Right-skewed*) | +1.462 | Leptokurtik Moderat | 0.016 |
+
+##### 3. Kualitas & Integritas Data Observasi (Data Completeness & Quality)
+
+Tabel ini mengevaluasi kelengkapan data pengamatan harian selama 1 tahun penuh serta validitas komputasi:
+
+| Variabel | Total Baris | Data Valid | Missing Values ($null$) | Rasio Missing (%) | No. NaNs | No. Tak Hingga ($\pm\infty$) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **CH₄ (Metana)** | 366 baris | 27 baris | 339 baris | 92.62% | 0 | 0 |
+| **CO (Karbon Monoksida)** | 366 baris | 236 baris | 130 baris | 35.52% | 0 | 0 |
+| **NO₂ (Nitrogen Dioksida)** | 366 baris | 218 baris | 148 baris | 40.44% | 0 | 0 |
+| **SO₂ (Sulfur Dioksida)** | 366 baris | 249 baris | 117 baris | 31.97% | 0 | 0 |
 
 ---
 
 ### 3.2 Penjelasan Komprehensif Masing-Masing Properti Statistik
 
-Berikut adalah penjelasan teoretis, fungsi, dan interpretasi dari setiap properti statistik yang dihasilkan oleh KNIME:
+Berikut adalah penjelasan teoretis, rumus matematis, keterangan komponen, dan interpretasi dari setiap properti statistik yang dihasilkan oleh node **Statistics** di KNIME:
 
 #### 1. Column
-- **Definisi**: Nama pengenal atribut atau variabel yang sedang dianalisis dalam tabel data.
-- **Fungsi**: Membedakan dimensi pengamatan, misalnya `id` sebagai indeks baris, serta `ch4`, `co`, `no2`, dan `so2` sebagai variabel konsentrasi polutan atmosfer.
+- **Definisi**: Nama pengenal variabel atau dimensi pengukuran dalam tabel data.
+- **Fungsi**: Membedakan atribut pengukuran konsentrasi polutan atmosfer (`ch4`, `co`, `no2`, dan `so2`), sedangkan kolom temporal `tanggal` dikelompokkan secara terpisah pada tab *Nominal Histogram Table*.
 
 #### 2. Min (Minimum)
-- **Definisi**: Nilai numerik terkecil di antara seluruh baris data valid pada kolom tertentu.
-- **Formula**:
+- **Definisi**: Nilai numerik terkecil di antara seluruh baris data valid pada variabel tertentu.
+- **Rumus Matematis**:
   $$\text{Min} = \min(x_1, x_2, \dots, x_n)$$
-- **Interpretasi**: Menunjukkan batas bawah pengamatan polutan. Misalnya pada CH₄, nilai minimum tercatat adalah $1\,632.623\ \text{ppb}$, sedangkan pada SO₂ terdapat nilai negatif ($-0.001\ \text{mol/m}^2$) akibat ketidakpastian koreksi radiometrik sensor satelit pada konsentrasi gas yang sangat tipis.
+- **Keterangan Simbol**:
+  - $x_i$: Nilai data observasi ke-$i$.
+  - $n$: Jumlah rekaman data yang valid (non-null).
+- **Interpretasi Data**:
+  - Menunjukkan batas bawah konsentrasi polutan. Pada CH₄, nilai minimum tercatat adalah $1\,841.516\ \text{ppb}$, CO sebesar $0.020\ \text{mol/m}^2$ ($0.020487$), dan NO₂ sebesar $5.23 \times 10^{-6}\ \text{mol/m}^2$ (dibulatkan menjadi `0` di KNIME).
+  - Pada gas SO₂ terdapat nilai minimum negatif ($-0.001\ \text{mol/m}^2$ di KNIME atau $-0.00052\ \text{mol/m}^2$ di Excel) akibat ketidakpastian koreksi radiometrik sensor satelit pada saat tutupan awan tipis (*cloud masking*).
 
 #### 3. Max (Maximum)
-- **Definisi**: Nilai numerik terbesar di antara seluruh baris data valid pada kolom tertentu.
-- **Formula**:
+- **Definisi**: Nilai numerik terbesar di antara seluruh baris data valid pada variabel tertentu.
+- **Rumus Matematis**:
   $$\text{Max} = \max(x_1, x_2, \dots, x_n)$$
-- **Interpretasi**: Mengindikasikan puncak konsentrasi tertinggi yang pernah tercatat selama rentang waktu satu tahun (misalnya nilai maksimum CH₄ mencapai $1\,934.86\ \text{ppb}$).
+- **Keterangan Simbol**:
+  - $x_i$: Nilai data observasi ke-$i$.
+  - $n$: Jumlah rekaman data yang valid.
+- **Interpretasi Data**:
+  - Mengindikasikan puncak konsentrasi tertinggi yang pernah tercatat selama rentang 1 tahun pengamatan. Nilai maksimum CH₄ mencapai $1\,916.853\ \text{ppb}$, CO mencapai $0.044\ \text{mol/m}^2$, SO₂ mencapai $0.001\ \text{mol/m}^2$, dan NO₂ mencapai $0.000246\ \text{mol/m}^2$.
 
 #### 4. Mean (Rata-rata Hitung / Aritmetika)
 - **Definisi**: Titik pusat massa atau nilai rerata aritmetika dari seluruh sampel data yang valid.
-- **Formula**:
+- **Rumus Matematis**:
   $$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
-- **Interpretasi**: Memberikan estimasi nilai ekspektasi tipikal dari suatu polutan sehari-hari di Kabupaten Bangkalan. Nilai mean CH₄ adalah $1\,868.202$, dan mean CO adalah $0.029$.
+- **Keterangan Simbol**:
+  - $\bar{x}$: Nilai rata-rata sampel (*sample mean*).
+  - $\sum_{i=1}^{n} x_i$: Akumulasi penjumlahan seluruh data yang valid.
+  - $n$: Banyaknya baris data yang valid.
+- **Interpretasi Data**:
+  - Memberikan estimasi nilai ekspektasi tipikal konsentrasi polutan harian di Kabupaten Bangkalan. Nilai rata-rata CH₄ adalah $1\,886.025\ \text{ppb}$, mean CO adalah $0.029\ \text{mol/m}^2$ ($0.028825$), mean SO₂ adalah $0.0000658\ \text{mol/m}^2$ ($6.58 \times 10^{-5}$), dan mean NO₂ adalah $0.0000356\ \text{mol/m}^2$ ($3.56 \times 10^{-5}$).
 
 #### 5. Median (Nilai Tengah)
-- **Definisi**: Nilai yang membagi distribusi data menjadi dua bagian yang sama besar (50% data di bawah median dan 50% data di atas median) setelah seluruh data diurutkan dari terkecil ke terbesar.
-- **Formula**:
-  $$\text{Median} = \begin{cases} x_{\left(\frac{n+1}{2}\right)}, & \text{jika } n \text{ ganjil} \\[6pt] \frac{x_{\left(\frac{n}{2}\right)} + x_{\left(\frac{n}{2} + 1\right)}}{2}, & \text{jika } n \text{ genap} \end{cases}$$
-- **Interpretasi**: Berbeda dengan mean, median bersifat *robust* (kebal terhadap pengaruh nilai ekstrem atau pencilan/*outliers*). Jika median dan mean memiliki perbedaan signifikan, hal itu menandakan adanya distribusi yang miring (*skewed*).
+- **Definisi**: Nilai yang membagi distribusi data terurut menjadi dua bagian yang berukuran sama (50% data di bawah median dan 50% data di atas median).
+- **Rumus Matematis**:
+  $$\text{Median} = \begin{cases} x_{\left(\frac{n+1}{2}\right)}, & \text{jika } n \text{ ganjil} \\[8pt] \frac{x_{\left(\frac{n}{2}\right)} + x_{\left(\frac{n}{2} + 1\right)}}{2}, & \text{jika } n \text{ genap} \end{cases}$$
+- **Keterangan Simbol**:
+  - $x_{(k)}$: Nilai observasi pada peringkat ke-$k$ setelah seluruh data diurutkan secara menaik (*ascending*).
+  - $n$: Ukuran sampel valid.
+- **Interpretasi Data**:
+  - Bersifat *robust* (kebal terhadap pengaruh nilai ekstrem atau pencilan/*outliers*).
+  - Pada antarmuka KNIME kolom ini berstatus `(?)` (tidak dihitung otomatis demi menghemat komputasi *sorting*), namun diverifikasi penuh di Excel: median CH₄ adalah $1\,886.851\ \text{ppb}$, CO adalah $0.028644\ \text{mol/m}^2$, NO₂ adalah $3.15 \times 10^{-5}\ \text{mol/m}^2$, dan SO₂ adalah $5.17 \times 10^{-5}\ \text{mol/m}^2$.
 
 #### 6. Std. Deviation (Standar Deviasi / Simpangan Baku)
-- **Definisi**: Ukuran dispersi atau variabilitas yang mengukur seberapa jauh nilai-nilai data individual menyebar dari nilai rata-ratanya ($\bar{x}$).
-- **Formula (Sampel)**:
+- **Definisi**: Ukuran dispersi yang mengukur simpangan rata-rata nilai-nilai data individual terhadap nilai rata-ratanya ($\bar{x}$).
+- **Rumus Matematis (Sampel)**:
   $$s = \sqrt{\frac{1}{n - 1} \sum_{i=1}^{n} (x_i - \bar{x})^2}$$
-- **Interpretasi**: Semakin besar nilai standar deviasi, semakin bervariasi atau fluktuatif konsentrasi gas polutan tersebut. Standar deviasi CH₄ sebesar $43.644$ menunjukkan fluktuasi konsentrasi yang cukup dinamis sepanjang tahun.
+- **Keterangan Simbol**:
+  - $s$: Simpangan baku sampel (*sample standard deviation*).
+  - $(x_i - \bar{x})$: Deviasi nilai observasi ke-$i$ dari rata-rata.
+  - $n - 1$: Derajat kebebasan (*degrees of freedom* / koreksi Bessel).
+- **Interpretasi Data**:
+  - Semakin besar nilai $s$, semakin bervariasi dan dinamis konsentrasi polutan tersebut. Standar deviasi CH₄ adalah $19.885$, CO sebesar $0.003$ ($0.003181$), NO₂ sebesar $2.40 \times 10^{-5}$, dan SO₂ sebesar $0.000203$.
 
 #### 7. Variance (Variansi / Ragam)
-- **Definisi**: Rata-rata kuadrat deviasi nilai data dari nilai rata-ratanya, yang merupakan kuadrat dari standar deviasi ($s^2$).
-- **Formula**:
+- **Definisi**: Rata-rata kuadrat deviasi nilai data dari nilai rata-ratanya, yang setara dengan kuadrat dari standar deviasi ($s^2$).
+- **Rumus Matematis**:
   $$s^2 = \frac{1}{n - 1} \sum_{i=1}^{n} (x_i - \bar{x})^2$$
-- **Interpretasi**: Menggambarkan besaran penyebaran kuadratik data. Karena satuannya adalah kuadrat dari satuan asli data, standar deviasi biasanya lebih mudah diinterpretasikan secara langsung dibandingkan variansi.
+- **Keterangan Simbol**:
+  - $s^2$: Variansi sampel (*sample variance*).
+- **Interpretasi Data**:
+  - Menggambarkan besaran dispersi kuadratik data. Variansi CH₄ adalah $395.419$ (kuadrat dari $19.885$). Untuk gas mikro seperti CO ($1.01 \times 10^{-5}$), SO₂ ($4.13 \times 10^{-8}$), dan NO₂ ($5.78 \times 10^{-10}$), nilainya dibulatkan menjadi $0$ pada tampilan 3 desimal KNIME.
 
 #### 8. Skewness (Kemiringan Distribusi)
-- **Definisi**: Derajat ketidaksimetrisan (*asymmetry*) dari kurva distribusi probabilitas data di sekitar nilai rata-ratanya.
-- **Formula (Sample Skewness / Fisher-Pearson)**:
+- **Definisi**: Derajat ketidaksimetrisan (*asymmetry*) kurva distribusi frekuensi di sekitar nilai rata-ratanya.
+- **Rumus Matematis (Fisher-Pearson Adjusted Sample Skewness)**:
   $$G_1 = \frac{n}{(n - 1)(n - 2)} \sum_{i=1}^{n} \left( \frac{x_i - \bar{x}}{s} \right)^3$$
-- **Interpretasi**:
-  - **Skewness $\approx 0$**: Distribusi simetris (membentuk kurva lonceng normal), contohnya pada kolom `id` ($0$).
-  - **Skewness $> 0$ (Positif / Right-skewed)**: Ekor distribusi memanjang ke arah kanan (nilai besar), contohnya pada `co` ($0.887$) dan `no2` ($2.113$). Sebagian besar data terkumpul di nilai rendah dengan sedikit lonjakan konsentrasi ekstrem.
-  - **Skewness $< 0$ (Negatif / Left-skewed)**: Ekor distribusi memanjang ke arah kiri (nilai kecil), contohnya pada `ch4` ($-2.431$) dan `so2` ($-1.241$).
+- **Keterangan Simbol**:
+  - $G_1$: Koefisien kemiringan sampel (formula standar yang digunakan pada KNIME dan rumus Excel `=SKEW`).
+  - $\frac{x_i - \bar{x}}{s}$: Skor standar (*z-score*) observasi ke-$i$.
+- **Interpretasi Data**:
+  - **Skewness $> 0$ (Miring ke Kanan / Positif)**: Ekor kurva memanjang ke arah nilai tinggi. Ditemukan secara sangat kuat pada `no2` ($3.924$), serta `co` ($0.703$) dan `so2` ($0.437$). Ini menunjukkan mayoritas hari memiliki konsentrasi gas normal yang rendah, dengan lonjakan emisi sporadis di hari-hari tertentu.
+  - **Skewness $< 0$ (Miring ke Kiri / Negatif)**: Ekor kurva memanjang ke arah nilai rendah. Terjadi pada `ch4` ($-0.711$), menandakan sebagian besar data berkumpul di konsentrasi yang relatif tinggi.
 
 #### 9. Kurtosis (Keruncingan Distribusi)
 - **Definisi**: Ukuran ketajaman puncak (*peakedness*) dan ketebalan ekor (*tailedness*) distribusi frekuensi data dibandingkan dengan distribusi normal standar.
-- **Formula (Sample Excess Kurtosis)**:
+- **Rumus Matematis (Sample Excess Kurtosis)**:
   $$G_2 = \frac{n(n + 1)}{(n - 1)(n - 2)(n - 3)} \sum_{i=1}^{n} \left( \frac{x_i - \bar{x}}{s} \right)^4 - \frac{3(n - 1)^2}{(n - 2)(n - 3)}$$
-- **Interpretasi**:
-  - **Kurtosis $> 0$ (Leptokurtik)**: Distribusi memiliki puncak yang sangat runcing dan ekor tebal (*heavy tails*), yang mengindikasikan adanya pencilan (*outliers*) yang signifikan. Polutan `so2` ($15.298$), `no2` ($14.554$), dan `ch4` ($10.171$) bertipe leptokurtik kuat.
-  - **Kurtosis $\approx 0$ (Mesokurtik)**: Bentuk kurva serupa dengan distribusi normal standar.
-  - **Kurtosis $< 0$ (Platikurtik)**: Distribusi berbentuk landai atau mendatar dengan ekor tipis, seperti pada kolom `id` ($-1.2$).
+- **Keterangan Simbol**:
+  - $G_2$: Nilai *excess kurtosis* sampel (formula standar pada KNIME dan rumus Excel `=KURT`). Pada kurva normal standar, $G_2 = 0$.
+  - Suku pertama: Momen keempat terstandarisasi dengan penimbang derajat kebebasan.
+  - Suku kedua: Faktor pengurang koreksi sampel terhadap nilai kurtosis mesokurtik normal ($3$).
+- **Interpretasi Data**:
+  - **Kurtosis $> 0$ (Leptokurtik / Berpuncak Runcing & Heavy Tails)**: Mengindikasikan sebaran data dengan puncak tajam dan ekor tebal berisi pencilan (*outliers*) ekstrem. Terlihat sangat dominan pada `no2` ($27.942$), serta `co` ($1.961$) dan `so2` ($1.462$).
+  - **Kurtosis $\approx 0$ (Mendekati Mesokurtik / Distribusi Normal)**: Terjadi pada `ch4` ($-0.007$). Nilainya yang hampir nol menandakan bahwa keruncingan distribusi gas metana menyerupai kurva lonceng normal standar dengan sebaran data yang merata di sekitar rata-rata.
 
 #### 10. Overall Sum (Jumlah Total)
-- **Definisi**: Akumulasi penjumlahan aritmetika dari seluruh data numerik yang valid pada kolom yang bersangkutan.
-- **Formula**:
+- **Definisi**: Akumulasi penjumlahan dari seluruh data numerik yang valid pada variabel yang bersangkutan.
+- **Rumus Matematis**:
   $$\text{Overall Sum} = \sum_{i=1}^{n} x_i$$
-- **Interpretasi**: Total kumulatif nilai sampel. Contohnya pada CH₄ bernilai $149\,456.129$, dan jumlah total baris `id` adalah $67\,161$.
+- **Interpretasi Data**:
+  - Total akumulasi nilai sampel valid: CH₄ sebesar $50\,922.664$, CO sebesar $6.803$ ($6.802761$), SO₂ sebesar $0.016$ ($0.016393$), dan NO₂ sebesar $0.008$ ($0.007751$).
 
 #### 11. No. Missings (Jumlah Nilai Hilang)
-- **Definisi**: Jumlah baris data yang bernilai kosong (`null`), di mana sensor tidak merekam data pengukuran pada tanggal tersebut.
-- **Formula**:
+- **Definisi**: Jumlah baris data observasi yang bernilai kosong (`null`), di mana sensor satelit tidak merekam data pengukuran pada tanggal tersebut.
+- **Rumus Matematis**:
   $$\text{No. Missings} = N_{\text{total}} - n_{\text{valid}}$$
-- **Interpretasi**: Kualitas data atmosfer satelit optik sangat dipengaruhi oleh kondisi atmosfer. Kolom `ch4` memiliki $286$ data *missing*, `co` memiliki $92$, `no2` memiliki $77$, dan `so2` memiliki $49$. Informasi ini menjadi landasan penting untuk tahap prapemrosesan (*imputasi*) berikutnya.
+- **Keterangan Simbol**:
+  - $N_{\text{total}}$: Total keseluruhan baris pengamatan dalam rentang satu tahun ($366$ hari).
+  - $n_{\text{valid}}$: Jumlah baris pengamatan yang terisi nilai numerik valid.
+- **Interpretasi Data**:
+  - Kualitas rekaman satelit Sentinel-5P dipengaruhi oleh tutupan awan (*cloud masking*). Dari total $366$ hari pengamatan:
+    - Kolom `ch4` memiliki $339$ data *missing* (hanya $27$ hari terekam valid).
+    - Kolom `no2` memiliki $148$ data *missing* ($218$ hari valid).
+    - Kolom `co` memiliki $130$ data *missing* ($236$ hari valid).
+    - Kolom `so2` memiliki $117$ data *missing* ($249$ hari valid).
 
 #### 12. No. NaNs (Not a Number)
-- **Definisi**: Jumlah sel data yang berisi nilai *NaN*, yaitu simbol khusus komputasi numerik untuk nilai yang tidak terdefinisi secara matematis (misalnya hasil pembagian dengan nol $0/0$ atau akar bilangan negatif).
-- **Interpretasi**: Pada dataset ini nilainya adalah $0$ untuk seluruh kolom, membuktikan tidak ada kegagalan komputasi numerik saat agregasi spasial.
+- **Definisi**: Jumlah sel data yang berisi nilai *NaN*, yaitu simbol khusus komputasi numerik untuk nilai yang tidak terdefinisi secara matematis (misalnya hasil operasi $0/0$).
+- **Interpretasi Data**: Pada dataset ini bernilai $0$ untuk seluruh kolom, membuktikan tidak terjadi anomali operasi aritmetika pada pipeline data.
 
 #### 13. No. +$\infty$ (No. +unlimited / Positive Infinity)
-- **Definisi**: Jumlah sel yang bernilai positif tak hingga ($+\infty$), biasanya muncul dari operasi pembagian nilai positif dengan nol ($x / 0$).
-- **Interpretasi**: Bernilai $0$ untuk seluruh kolom (data berada dalam rentang terhingga yang wajar).
+- **Definisi**: Jumlah sel yang bernilai positif tak hingga ($+\infty$), biasanya muncul dari pembagian bilangan riil dengan nol ($x / 0$).
+- **Interpretasi Data**: Bernilai $0$ untuk seluruh kolom.
 
 #### 14. No. -$\infty$ (No. -unlimited / Negative Infinity)
 - **Definisi**: Jumlah sel yang bernilai negatif tak hingga ($-\infty$), biasanya terjadi akibat pembagian nilai negatif dengan nol ($-x / 0$) atau nilai logaritma dari nol ($\ln(0)$).
-- **Interpretasi**: Bernilai $0$ untuk seluruh kolom.
+- **Interpretasi Data**: Bernilai $0$ untuk seluruh kolom.
 
 #### 15. Row Count (Jumlah Total Baris)
 - **Definisi**: Total keseluruhan baris pengamatan dalam tabel data, baik yang berisi nilai valid maupun nilai *missing*.
-- **Interpretasi**: Bernilai $366$ baris untuk semua kolom, merepresentasikan 366 hari pengamatan (tahun kabisat).
+- **Interpretasi Data**: Bernilai $366$ baris untuk semua kolom, merepresentasikan 366 hari pengamatan (tahun kabisat 2024–2025).
 
 #### 16. Histogram (Distribusi Frekuensi)
-- **Definisi**: Representasi grafis berbentuk diagram batang yang memetakan frekuensi kemunculan nilai data ke dalam rentang interval (*bins*) tertentu.
-- **Interpretasi**: Memvisualisasikan secara langsung kurva sebaran data, letak konsentrasi data terbanyak, serta keberadaan nilai pencilan di sisi ekor grafik.
+- **Definisi**: Representasi grafis berbentuk diagram batang mini (*sparkline histogram*) yang memetakan frekuensi kemunculan nilai data ke dalam rentang interval (*bins*) tertentu.
+- **Interpretasi Data**: Pada kolom antarmuka KNIME, visualisasi histogram batang menunjukkan secara intuitif bentuk sebaran data—misalnya kurva distribusi NO₂ yang condong kuat ke kiri dengan ekor panjang ke kanan (*skewness* $3.924$).
 
 ---
 
@@ -291,7 +368,7 @@ Untuk memverifikasi kebenaran perhitungan statistik yang dihasilkan oleh KNIME, 
 :width: 100%
 :align: center
 
-Hasil Validasi Statistik Deskriptif dan Visualisasi Histogram Menggunakan Microsoft Excel.
+Hasil Validasi Statistik Deskriptif Menggunakan Microsoft Excel untuk Keempat Gas Polutan.
 ```
 
 > 📥 **File Dataset CSV:**
@@ -299,108 +376,130 @@ Hasil Validasi Statistik Deskriptif dan Visualisasi Histogram Menggunakan Micros
 
 ### 4.1 Tabel Validasi Komparasi Data Excel
 
-Berikut adalah tabel hasil komputasi presisi tinggi yang dihasilkan pada lembar kerja Microsoft Excel untuk keempat gas polutan:
+Berikut adalah tabel hasil komputasi presisi tinggi yang dihasilkan pada lembar kerja Microsoft Excel (sesuai tangkapan layar `perhitungan-manual_exel.png`) untuk keempat gas polutan:
 
-| Kolom Polutan | MIN | MAX | MEAN | STD DEVIATION | VARIANCE | SKEWNESS | KURTOSIS | OVERALL SUM | NO MISS | NO NaNs | No +oos | No -oos | Median | Row Count (Valid/Total) |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **CH4** | 1632.623413 | 1934.859901 | 1868.201617 | 43.64379091 | 1904.780485 | -2.4306975 | 10.17082 | 149456.1293 | 286 | 0 | 0 | 0 | 1879.0479 | 80 / 366 |
-| **CO** | 0.020487351 | 0.043854946 | 0.0286226 | 0.002866045 | 8.21421E-06 | 0.8873338 | 2.649587 | 7.842592315 | 92 | 0 | 0 | 0 | 0.028381 | 274 / 366 |
-| **NO2** | 1.81E-06 | 1.04E-04 | 2.45E-05 | 9.76E-06 | 9.53E-11 | 2.11 | 14.6 | 7.08E-03 | 77 | 0 | 0 | 0 | 2.35E-05 | 289 / 366 |
-| **SO2** | -0.001007149 | 0.000619241 | 3.65828E-05 | 0.000128303 | 1.64617E-08 | -1.2405101 | 15.29753 | 0.01159676 | 49 | 0 | 0 | 0 | 0.0000329 | 317 / 366 |
+| Column | Min | Max | Mean | Std. deviation | Variance | Skewness | Kurtosis | Overall sum | No. missings | No. NaNs | No. +$\infty$ | No. -$\infty$ | Median | Row count |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **ch4** | 1841.516 | 1916.853 | 1886.025 | 19.88513 | 395.4186 | -0.71079 | -0.00677 | 50922.66 | 339 | 0 | 0 | 0 | - | 366 |
+| **co** | 0.020487 | 0.044218 | 0.028825 | 0.003181 | 1.01E-05 | 0.703194 | 1.960951 | 6.802761 | 130 | 0 | 0 | 0 | - | 366 |
+| **no2** | 5.23E-06 | 0.000246 | 3.56E-05 | 2.4E-05 | 5.78E-10 | 3.924393 | 27.94159 | 0.007751 | 148 | 0 | 0 | 0 | - | 366 |
+| **so2** | -0.00052 | 0.000808 | 6.58E-05 | 0.000203 | 4.13E-08 | 0.436808 | 1.462382 | 0.016393 | 117 | 0 | 0 | 0 | - | 366 |
+
+**Catatan Hasil Komparasi:**
+1. **Konsistensi KNIME dan Excel**: Seluruh nilai metrik pada Excel di atas konsisten 100% terhadap ringkasan statistik KNIME. Pada gas NO₂ dan SO₂, Excel menampilkan notasi eksponensial presisi tinggi (misal variansi NO₂ sebesar $5.78 \times 10^{-10}$ dan mean sebesar $3.56 \times 10^{-5}$) yang pada antarmuka KNIME dibulatkan menjadi `0`.
+2. **Proporsi Baris Valid vs Missing ($N = 366$):**
+   - **CH₄**: $27$ baris valid ($366 - 339$)
+   - **CO**: $236$ baris valid ($366 - 130$)
+   - **NO₂**: $218$ baris valid ($366 - 148$)
+   - **SO₂**: $249$ baris valid ($366 - 117$)
+3. **Nilai Median Terhitung di Excel (`=MEDIAN`):**
+   - CH₄: $1886.851\ \text{ppb}$
+   - CO: $0.028644\ \text{mol/m}^2$
+   - NO₂: $3.15 \times 10^{-5}\ \text{mol/m}^2$
+   - SO₂: $5.17 \times 10^{-5}\ \text{mol/m}^2$
 
 ---
 
 ### 4.2 Simulasi Perhitungan Manual Langkah Demi Langkah (Step-by-Step)
 
-Agar mekanisme kalkulasi statistik deskriptif dapat dipahami secara transparan, mari kita lakukan simulasi perhitungan manual menggunakan sampel data kecil ($n = 5$) yang diambil secara acak dari data terurut polutan CH₄:
+Untuk memahami secara transparan bagaimana setiap rumus matematis bekerja, mari kita lakukan simulasi kalkulasi manual menggunakan sampel data kecil ($n = 5$) yang diambil dari data terurut polutan CH₄ pada dataset:
 
-$$X = \{ 1837.93,\ 1847.77,\ 1878.62,\ 1882.55,\ 1883.38 \}$$
+$$X = \{ 1850.21,\ 1867.29,\ 1886.85,\ 1897.61,\ 1908.68 \}$$
 
-Jumlah sampel valid: $n = 5$.
-
----
-
-#### 1. Perhitungan Minimum (Min)
-Mencari elemen data dengan nilai terkecil pada himpunan sampel:
-$$\text{Min} = \min(1837.93,\ 1847.77,\ 1878.62,\ 1882.55,\ 1883.38) = \mathbf{1837.93}$$
+- Ukuran sampel valid: $n = 5$
+- Total pengamatan: $N = 366$
 
 ---
 
-#### 2. Perhitungan Maksimum (Max)
-Mencari elemen data dengan nilai terbesar pada himpunan sampel:
-$$\text{Max} = \max(1837.93,\ 1847.77,\ 1878.62,\ 1882.55,\ 1883.38) = \mathbf{1883.38}$$
+#### 1. Perhitungan Nilai Minimum (Min)
+Mencari elemen data dengan nilai numerik terkecil pada himpunan sampel:
+$$\text{Min} = \min(1850.21,\ 1867.29,\ 1886.85,\ 1897.61,\ 1908.68) = \mathbf{1850.21}$$
 
 ---
 
-#### 3. Perhitungan Mean ($\bar{x}$)
-Menjumlahkan seluruh elemen data, kemudian membaginya dengan ukuran sampel ($n$):
-$$\sum_{i=1}^{5} x_i = 1837.93 + 1847.77 + 1878.62 + 1882.55 + 1883.38 = 9330.25$$
-$$\bar{x} = \frac{\sum_{i=1}^{5} x_i}{n} = \frac{9330.25}{5} = \mathbf{1866.05}$$
+#### 2. Perhitungan Nilai Maksimum (Max)
+Mencari elemen data dengan nilai numerik terbesar pada himpunan sampel:
+$$\text{Max} = \max(1850.21,\ 1867.29,\ 1886.85,\ 1897.61,\ 1908.68) = \mathbf{1908.68}$$
 
 ---
 
-#### 4. Perhitungan Median
-Karena data sudah terurut dan ukuran sampel $n = 5$ bernilai ganjil:
+#### 3. Perhitungan Nilai Rata-rata (Mean / $\bar{x}$)
+Menjumlahkan seluruh elemen data, kemudian membaginya dengan jumlah sampel ($n = 5$):
+$$\sum_{i=1}^{5} x_i = 1850.21 + 1867.29 + 1886.85 + 1897.61 + 1908.68 = 9410.64$$
+
+$$\bar{x} = \frac{\sum_{i=1}^{5} x_i}{n} = \frac{9410.64}{5} = \mathbf{1882.128} \approx \mathbf{1882.13}$$
+
+---
+
+#### 4. Perhitungan Nilai Tengah (Median)
+Karena data telah diurutkan menaik dan ukuran sampel $n = 5$ bernilai ganjil:
 $$\text{Posisi Median} = \frac{n + 1}{2} = \frac{5 + 1}{2} = 3$$
-$$\text{Median} = X_{(3)} = \mathbf{1878.62}$$
 
-*(Jika $n$ genap, median dihitung dari rata-rata dua nilai tengah: $\frac{X_{(n/2)} + X_{(n/2 + 1)}}{2}$)*
+$$\text{Median} = X_{(3)} = \mathbf{1886.85}$$
+
+*(Catatan: Jika ukuran sampel $n$ genap, nilai median dihitung dari rata-rata dua titik tengah: $\frac{X_{(n/2)} + X_{(n/2 + 1)}}{2}$).*
 
 ---
 
 #### 5. Perhitungan Variansi ($s^2$) & Standar Deviasi ($s$)
-Dibuat tabel deviasi terhadap nilai rata-rata ($\bar{x} = 1866.05$):
+Dibuat tabel deviasi terhadap nilai rata-rata sampel ($\bar{x} = 1882.128$):
 
 | $i$ | $x_i$ | $(x_i - \bar{x})$ | $(x_i - \bar{x})^2$ | $(x_i - \bar{x})^3$ | $(x_i - \bar{x})^4$ |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 | 1837.93 | $-28.12$ | $790.7344$ | $-22235.45$ | $625260.9$ |
-| 2 | 1847.77 | $-18.28$ | $334.1584$ | $-6108.42$ | $111661.8$ |
-| 3 | 1878.62 | $+12.57$ | $158.0049$ | $+1986.12$ | $24965.5$ |
-| 4 | 1882.55 | $+16.50$ | $272.2500$ | $+4492.13$ | $74120.1$ |
-| 5 | 1883.38 | $+17.33$ | $300.3289$ | $+5204.70$ | $90197.4$ |
-| **Total ($\sum$)** | **9330.25** | **0.00** | **1855.4766** | **-16660.92** | **926205.7** |
+| 1 | 1850.21 | $-31.918$ | $1018.7587$ | $-32516.74$ | $1037869.34$ |
+| 2 | 1867.29 | $-14.838$ | $220.1662$ | $-3266.83$ | $48473.17$ |
+| 3 | 1886.85 | $+4.722$ | $22.2973$ | $+105.29$ | $497.17$ |
+| 4 | 1897.61 | $+15.482$ | $239.6923$ | $+3710.92$ | $57452.41$ |
+| 5 | 1908.68 | $+26.552$ | $705.0087$ | $+18719.39$ | $497037.27$ |
+| **Total ($\sum$)** | **9410.64** | **0.000** | **2205.9233** | **-13247.97** | **1641329.36** |
 
 **Variansi Sampel ($s^2$):**
-$$s^2 = \frac{\sum (x_i - \bar{x})^2}{n - 1} = \frac{1855.4766}{5 - 1} = \frac{1855.4766}{4} = \mathbf{463.869}$$
+$$s^2 = \frac{\sum_{i=1}^{n} (x_i - \bar{x})^2}{n - 1} = \frac{2205.9233}{5 - 1} = \frac{2205.9233}{4} = \mathbf{551.4808} \approx \mathbf{551.481}$$
 
 **Standar Deviasi Sampel ($s$):**
-$$s = \sqrt{s^2} = \sqrt{463.869} = \mathbf{21.5376}$$
+$$s = \sqrt{s^2} = \sqrt{551.4808} = \mathbf{23.4836} \approx \mathbf{23.484}$$
 
 ---
 
-#### 6. Perhitungan Skewness ($G_1$)
+#### 6. Perhitungan Kemiringan (Skewness / $G_1$)
 Menggunakan rumus Fisher-Pearson sample skewness:
 $$G_1 = \frac{n}{(n - 1)(n - 2)} \sum_{i=1}^{n} \left( \frac{x_i - \bar{x}}{s} \right)^3 = \frac{n}{(n - 1)(n - 2) \cdot s^3} \sum_{i=1}^{n} (x_i - \bar{x})^3$$
+
 Substitusi nilai yang diperoleh:
-$$s^3 = (21.5376)^3 \approx 9990.66$$
-$$\frac{n}{(n - 1)(n - 2)} = \frac{5}{4 \times 3} = \frac{5}{12} \approx 0.4167$$
-$$G_1 = 0.4167 \times \frac{-16660.92}{9990.66} = 0.4167 \times (-1.6676) = \mathbf{-0.6949}$$
-*(Nilai negatif menunjukkan ekor distribusi memanjang ke sisi kiri / nilai kecil).*
+- $s^3 = (23.4836)^3 \approx 12950.84$
+- $\sum_{i=1}^{5} (x_i - \bar{x})^3 = -13247.97$
+- Faktor pengali: $\frac{n}{(n - 1)(n - 2)} = \frac{5}{4 \times 3} = \frac{5}{12} \approx 0.4167$
+
+$$G_1 = 0.4167 \times \frac{-13247.97}{12950.84} = 0.4167 \times (-1.02294) = \mathbf{-0.4262}$$
+
+*(Tanda negatif mengonfirmasi bahwa ekor kurva distribusi sampel memanjang ke arah kiri).*
 
 ---
 
-#### 7. Perhitungan Kurtosis ($G_2$)
+#### 7. Perhitungan Keruncingan (Kurtosis / $G_2$)
 Menggunakan rumus sample excess kurtosis:
 $$G_2 = \frac{n(n + 1)}{(n - 1)(n - 2)(n - 3)} \sum_{i=1}^{n} \left( \frac{x_i - \bar{x}}{s} \right)^4 - \frac{3(n - 1)^2}{(n - 2)(n - 3)}$$
+
 Substitusi nilai yang diperoleh:
-$$s^4 = (463.869)^2 \approx 215174.45$$
-$$\sum \left( \frac{x_i - \bar{x}}{s} \right)^4 = \frac{926205.7}{215174.45} \approx 4.3044$$
-Faktor pengali pertama:
-$$\frac{5 \times 6}{4 \times 3 \times 2} = \frac{30}{24} = 1.25$$
-Faktor pengurang kedua:
-$$\frac{3 \times (4)^2}{3 \times 2} = \frac{48}{6} = 8.00$$
-$$G_2 = (1.25 \times 4.3044) - 8.00 = 5.3805 - 8.00 = \mathbf{-2.6195}$$
+- $s^4 = (551.4808)^2 \approx 304131.07$
+- $\sum_{i=1}^{5} \left( \frac{x_i - \bar{x}}{s} \right)^4 = \frac{1641329.36}{304131.07} \approx 5.3968$
+- Suku pengali pertama: $\frac{5 \times (5 + 1)}{4 \times 3 \times 2} = \frac{30}{24} = 1.25$
+- Suku pengurang kedua: $\frac{3 \times (4)^2}{3 \times 2} = \frac{48}{6} = 8.00$
+
+$$G_2 = (1.25 \times 5.3968) - 8.00 = 6.7460 - 8.00 = \mathbf{-1.2540}$$
+
+*(Nilai $G_2 < 0$ menunjukkan distribusi berbentuk platikurtik dengan puncak yang lebih landai dibanding kurva normal).*
 
 ---
 
-#### 8. Perhitungan Overall Sum
-$$\text{Overall Sum} = \sum_{i=1}^{5} x_i = \mathbf{9330.25}$$
+#### 8. Perhitungan Jumlah Kumulatif (Overall Sum)
+$$\text{Overall Sum} = \sum_{i=1}^{5} x_i = 1850.21 + 1867.29 + 1886.85 + 1897.61 + 1908.68 = \mathbf{9410.64}$$
 
 ---
 
-#### 9. Perhitungan No. Missings
-Jika total baris tabel pengamatan adalah $N = 366$ dan baris yang memiliki nilai numerik valid adalah $n = 80$:
-$$\text{No. Missings} = 366 - 80 = \mathbf{286}$$
+#### 9. Perhitungan Jumlah Data Hilang (No. Missings)
+Dengan total baris data pengamatan $N_{\text{total}} = 366$ dan baris data terisi valid pada gas CH₄ sebanyak $n_{\text{valid}} = 27$:
+$$\text{No. Missings} = N_{\text{total}} - n_{\text{valid}} = 366 - 27 = \mathbf{339}$$
 
 ---
 
@@ -492,6 +591,7 @@ Berikut adalah daftar rumus fungsi bawaan Microsoft Excel yang dapat langsung di
 Jika Anda ingin membuat tabel ringkasan statistik komprehensif di Excel (misal Kolom B = CH4, Kolom C = CO, Kolom D = NO2, Kolom E = SO2):
 
 ```text
+
 =MIN(B2:B367)          ' Rumus Min
 =MAX(B2:B367)          ' Rumus Max
 =AVERAGE(B2:B367)      ' Rumus Mean
@@ -514,6 +614,6 @@ Jika Anda ingin membuat tabel ringkasan statistik komprehensif di Excel (misal K
 Berdasarkan seluruh tahapan yang telah diselesaikan pada Pertemuan ke-2:
 1. **Migrasi Data ke Cloud**: Dataset polutan hasil Sentinel-5P sukses diunggah ke PostgreSQL Aiven dengan penataan skema tabel DDL yang terstruktur dan aman.
 2. **Koneksi KNIME ke Cloud**: KNIME Analytics Platform berhasil membaca dataset cloud secara *real-time* via JDBC SSL menggunakan pasangan node *PostgreSQL Connector* dan *DB Query Reader*.
-3. **Analisis Statistik Deskriptif**: Node *Statistics* di KNIME memberikan gambaran profil distribusi data yang komprehensif untuk gas CH₄, CO, NO₂, dan SO₂. Diketahui bahwa data CH₄, NO₂, dan SO₂ memiliki nilai kurtosis tinggi (leptokurtik) dengan kemiringan distribusi yang mencerminkan keberadaan lonjakan emisi musiman.
+3. **Analisis Statistik Deskriptif**: Node *Statistics* di KNIME memberikan gambaran profil distribusi data yang komprehensif untuk gas CH₄, CO, NO₂, dan SO₂. Terungkap bahwa data NO₂ memiliki keruncingan kurva sangat tajam (leptokurtik ekstrem dengan kurtosis $27.942$) serta *skewness* positif ($3.924$) akibat lonjakan konsentrasi pencilan. Gas CO dan SO₂ juga bertipe leptokurtik dengan distribusi miring ke kanan, sedangkan gas CH₄ memiliki kurva yang relatif seimbang menyerupai distribusi normal (mesokurtik dengan kurtosis $-0.007$).
 4. **Validasi & Integritas Data**: Seluruh kalkulasi KNIME terbukti 100% konsisten terhadap hasil perhitungan manual serta rumus standar Microsoft Excel (`=MIN`, `=MAX`, `=AVERAGE`, `=MEDIAN`, `=STDEV.S`, `=VAR.S`, `=SKEW`, `=KURT`, `=SUM`, `=COUNTBLANK`).
-5. Ketersediaan informasi *missing values* (seperti 286 baris missing pada CH₄ dan 92 pada CO) menjadi pijakan penting dalam merancang strategi pembersihan data (*data cleaning*) dan imputasi deret waktu pada pertemuan berikutnya.
+5. Ketersediaan informasi *missing values* (seperti 339 baris missing pada CH₄, 148 pada NO₂, 130 pada CO, dan 117 pada SO₂) menjadi pijakan penting dalam merancang strategi pembersihan data (*data cleaning*) dan imputasi deret waktu pada pertemuan berikutnya.
