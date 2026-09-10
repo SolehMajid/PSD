@@ -1,4 +1,4 @@
-1. crawling ulang,sesuai dengan kecamatan.
+
 2. menyelesaikan missing value dengan Teknik komputasi ( metode metode yang untuk meyelesaikan missing value ).
 3. sebelum melakukan missing value lakukan deteksi outlier. 
 4. datanya sudah bersih.

@@ -3,6 +3,7 @@ folium
 pandas
 numpy
 matplotlib
+scipy
 requests
 scikit-learn
 openpyxl

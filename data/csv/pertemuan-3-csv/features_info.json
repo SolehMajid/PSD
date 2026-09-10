@@ -1,0 +1,342 @@
+{
+  "abs_energy": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes the absolute energy of the signal."
+  },
+  "auc": {
+    "domain": "temporal",
+    "signature": "(signal, fs)",
+    "description": "Computes the area under the curve of the signal computed with trapezoid"
+  },
+  "autocorr": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Calculates the first 1/e crossing of the autocorrelation function (ACF)."
+  },
+  "average_power": {
+    "domain": "statistical",
+    "signature": "(signal, fs)",
+    "description": "Computes the average power of the signal."
+  },
+  "calc_centroid": {
+    "domain": "temporal",
+    "signature": "(signal, fs)",
+    "description": "Computes the centroid along the time axis."
+  },
+  "calc_max": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes the maximum value of the signal."
+  },
+  "calc_mean": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes mean value of the signal."
+  },
+  "calc_median": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes median of the signal."
+  },
+  "calc_min": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes the minimum value of the signal."
+  },
+  "calc_std": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes standard deviation (std) of the signal."
+  },
+  "calc_var": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes variance of the signal."
+  },
+  "dfa": {
+    "domain": "fractal",
+    "signature": "(signal)",
+    "description": "Computes the Detrended Fluctuation Analysis (DFA) of the signal."
+  },
+  "distance": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes signal traveled distance."
+  },
+  "ecdf": {
+    "domain": "statistical",
+    "signature": "(signal, d=10)",
+    "description": "Computes the values of ECDF (empirical cumulative distribution function)"
+  },
+  "ecdf_percentile": {
+    "domain": "statistical",
+    "signature": "(signal, percentile=None)",
+    "description": "Computes the percentile value of the ECDF."
+  },
+  "ecdf_percentile_count": {
+    "domain": "statistical",
+    "signature": "(signal, percentile=None)",
+    "description": "Computes the cumulative sum of samples that are less than the"
+  },
+  "ecdf_slope": {
+    "domain": "statistical",
+    "signature": "(signal, p_init=0.5, p_end=0.75)",
+    "description": "Computes the slope of the ECDF between two percentiles. Possibility to"
+  },
+  "entropy": {
+    "domain": "statistical",
+    "signature": "(signal, prob='standard')",
+    "description": "Computes the entropy of the signal using the Shannon Entropy."
+  },
+  "fundamental_frequency": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes fundamental frequency of the signal."
+  },
+  "higuchi_fractal_dimension": {
+    "domain": "fractal",
+    "signature": "(signal)",
+    "description": "Computes the fractal dimension of a signal using Higuchi's method (HFD)."
+  },
+  "hist_mode": {
+    "domain": "statistical",
+    "signature": "(signal, nbins=10)",
+    "description": "Compute the mode of a histogram using a given number of (linearly"
+  },
+  "human_range_energy": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes the human range energy ratio."
+  },
+  "hurst_exponent": {
+    "domain": "fractal",
+    "signature": "(signal)",
+    "description": "Computes the Hurst exponent of the signal through the Rescaled range"
+  },
+  "interq_range": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes interquartile range of the signal."
+  },
+  "kurtosis": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes kurtosis of the signal."
+  },
+  "lempel_ziv": {
+    "domain": "temporal",
+    "signature": "(signal, threshold=None)",
+    "description": "Computes the Lempel-Ziv's (LZ) complexity index, normalized by the"
+  },
+  "lpcc": {
+    "domain": "spectral",
+    "signature": "(signal, n_coeff=12)",
+    "description": "Computes the linear prediction cepstral coefficients."
+  },
+  "max_frequency": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes maximum frequency of the signal."
+  },
+  "max_power_spectrum": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes maximum power spectrum density of the signal."
+  },
+  "maximum_fractal_length": {
+    "domain": "fractal",
+    "signature": "(signal)",
+    "description": "Computes the Maximum Fractal Length (MFL) of the signal, which is the"
+  },
+  "mean_abs_deviation": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes mean absolute deviation of the signal."
+  },
+  "mean_abs_diff": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes mean absolute differences of the signal."
+  },
+  "mean_diff": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes mean of differences of the signal."
+  },
+  "median_abs_deviation": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes median absolute deviation of the signal."
+  },
+  "median_abs_diff": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes median absolute differences of the signal."
+  },
+  "median_diff": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes median of differences of the signal."
+  },
+  "median_frequency": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes median frequency of the signal."
+  },
+  "mfcc": {
+    "domain": "spectral",
+    "signature": "(signal, fs, pre_emphasis=0.97, nfft=512, nfilt=40, num_ceps=12, cep_lifter=22)",
+    "description": "Computes the MEL cepstral coefficients."
+  },
+  "mse": {
+    "domain": "fractal",
+    "signature": "(signal, m=3, maxscale=None, tolerance=None)",
+    "description": "Computes the Multiscale entropy (MSE) of the signal, that performs the"
+  },
+  "negative_turning": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes number of negative turning points of the signal."
+  },
+  "neighbourhood_peaks": {
+    "domain": "temporal",
+    "signature": "(signal, n=10)",
+    "description": "Computes the number of peaks from a defined neighbourhood of the signal."
+  },
+  "petrosian_fractal_dimension": {
+    "domain": "fractal",
+    "signature": "(signal)",
+    "description": "Computes the Petrosian Fractal Dimension of a signal."
+  },
+  "pk_pk_distance": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes the peak to peak distance."
+  },
+  "positive_turning": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes number of positive turning points of the signal."
+  },
+  "power_bandwidth": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes power spectrum density bandwidth of the signal."
+  },
+  "rms": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes root mean square of the signal."
+  },
+  "skewness": {
+    "domain": "statistical",
+    "signature": "(signal)",
+    "description": "Computes skewness of the signal."
+  },
+  "slope": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes the slope of the signal."
+  },
+  "spectral_centroid": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Barycenter of the spectrum."
+  },
+  "spectral_decrease": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Represents the amount of decreasing of the spectra amplitude."
+  },
+  "spectral_distance": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes the signal spectral distance."
+  },
+  "spectral_entropy": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes the spectral entropy of the signal based on Fourier transform."
+  },
+  "spectral_kurtosis": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Measures the flatness of a distribution around its mean value."
+  },
+  "spectral_positive_turning": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes number of positive turning points of the fft magnitude signal."
+  },
+  "spectral_roll_off": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes the spectral roll-off of the signal."
+  },
+  "spectral_roll_on": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes the spectral roll-on of the signal."
+  },
+  "spectral_skewness": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Measures the asymmetry of a distribution around its mean value."
+  },
+  "spectral_slope": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes the spectral slope."
+  },
+  "spectral_spread": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Measures the spread of the spectrum around its mean value."
+  },
+  "spectral_variation": {
+    "domain": "spectral",
+    "signature": "(signal, fs)",
+    "description": "Computes the amount of variation of the spectrum along time."
+  },
+  "spectrogram_mean_coeff": {
+    "domain": "spectral",
+    "signature": "(signal, fs, bins=32)",
+    "description": "Calculates the average power spectral density (PSD) for each frequency"
+  },
+  "sum_abs_diff": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes sum of absolute differences of the signal."
+  },
+  "wavelet_abs_mean": {
+    "domain": "spectral",
+    "signature": "(signal, fs, wavelet='mexh', max_width=10)",
+    "description": "Computes CWT absolute mean value of each wavelet scale."
+  },
+  "wavelet_energy": {
+    "domain": "spectral",
+    "signature": "(signal, fs, wavelet='mexh', max_width=10)",
+    "description": "Computes CWT energy of each wavelet scale."
+  },
+  "wavelet_entropy": {
+    "domain": "spectral",
+    "signature": "(signal, fs, wavelet='mexh', max_width=10)",
+    "description": "Computes CWT entropy of the signal."
+  },
+  "wavelet_std": {
+    "domain": "spectral",
+    "signature": "(signal, fs, wavelet='mexh', max_width=10)",
+    "description": "Computes CWT std value of each wavelet scale."
+  },
+  "wavelet_var": {
+    "domain": "spectral",
+    "signature": "(signal, fs, wavelet='mexh', max_width=10)",
+    "description": "Computes CWT variance value of each wavelet scale."
+  },
+  "zero_cross": {
+    "domain": "temporal",
+    "signature": "(signal)",
+    "description": "Computes Zero-crossing rate of the signal."
+  }
+}

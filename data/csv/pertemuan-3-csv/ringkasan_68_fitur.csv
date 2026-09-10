@@ -1,0 +1,69 @@
+No,Fungsi TSFEL,Nama Fitur,Domain,Formula,Deskripsi,Nilai,Detail Nilai,Jumlah Kolom
+1,`abs_energy(signal)`,Absolute energy,Statistical,E = \sum_{i=1}^{N} x_i^2,Total energi absolut sinyal sebagai jumlahan kuadrat seluruh nilai observasi.,0.300680,0.300680,1
+2,`average_power(signal)`,Average power,Statistical,P_{avg} = \frac{1}{N} \sum_{i=1}^{N} x_i^2,Daya rata-rata sinyal per sampel waktu observasi.,0.082604,0.082604,1
+3,`calc_max(signal)`,Max,Statistical,x_{max} = \max_{1 \le i \le N}(x_i),Nilai konsentrasi CO maksimum dalam periode observasi.,0.036134,0.036134,1
+4,`calc_mean(signal)`,Mean,Statistical,\mu = \frac{1}{N} \sum_{i=1}^{N} x_i,Rata-rata aritmatika konsentrasi gas CO harian.,0.028584,0.028584,1
+5,`calc_median(signal)`,Median,Statistical,\tilde{x} = \text{median}(x),Nilai median tengah dari deret konsentrasi CO.,0.028389,0.028389,1
+6,`calc_min(signal)`,Min,Statistical,x_{min} = \min_{1 \le i \le N}(x_i),Nilai konsentrasi CO minimum selama periode observasi.,0.020487,0.020487,1
+7,`calc_std(signal)`,Standard deviation,Statistical,\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2},Standar deviasi simpangan baku sebaran data dari rata-rata.,0.002595,0.002595,1
+8,`calc_var(signal)`,Variance,Statistical,\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2,Variansi kuadrat deviasi konsentrasi CO.,0.000007,0.000007,1
+9,`ecdf(signal)`,ECDF,Statistical,\hat{F}_n(t) = \frac{1}{N} \sum_{i=1}^N \mathbf{1}_{x_i \le t},Nilai fungsi distribusi kumulatif empiris pada 10 kuantil bertingkat.,"Array (10 nilai, range: [0.0027, 0.0274])","10 koefisien: 0: 0.0027, 1: 0.0055, 2: 0.0082, ...",10
+10,`ecdf_percentile(signal)`,ECDF Percentile,Statistical,Q(p) = \inf\{x : \hat{F}_n(x) \ge p\},Nilai konsentrasi batas persentil ke-20 dan ke-80.,"Array (2 nilai, range: [0.0264, 0.0305])","2 koefisien: 0: 0.0264, 1: 0.0305, ...",2
+11,`ecdf_percentile_count(signal)`,ECDF Percentile Count,Statistical,C(p) = \sum_{i=1}^N \mathbf{1}_{x_i \le Q(p)},Jumlah sampel data kumulatif di bawah persentil ke-20 dan ke-80.,"Array (2 nilai, range: [73.0000, 292.0000])","2 koefisien: 0: 73.0000, 1: 292.0000, ...",2
+12,`ecdf_slope(signal)`,ECDF Slope,Statistical,S_{ecdf} = \frac{p_{end} - p_{init}}{Q(p_{end}) - Q(p_{init})},Kemiringan akumulasi probabilitas ECDF antara persentil 0.50 dan 0.75.,127.679760,127.679760,1
+13,`entropy(signal)`,Entropy,Statistical,H(X) = -\sum p(x_i) \log_2 p(x_i),Tingkat entropi Shannon keacakan sebaran nilai konsentrasi.,1.000000,1.000000,1
+14,`hist_mode(signal)`,Histogram mode,Statistical,M_{hist} = \text{center}(\arg\max \text{Bin}),Modus titik tengah bin histogram dengan frekuensi kemunculan tertinggi.,0.027528,0.027528,1
+15,`interq_range(signal)`,Interquartile range,Statistical,IQR = Q_3 - Q_1,Rentang interkuartil yang mencakup 50% persebaran data inti.,0.003516,0.003516,1
+16,`kurtosis(signal)`,Kurtosis,Statistical,\text{Kurt} = \frac{\mu_4}{\sigma^4} - 3,Derajat keruncingan kurva distribusi relatif terhadap distribusi normal.,0.070144,0.070144,1
+17,`mean_abs_deviation(signal)`,Mean absolute deviation,Statistical,MAD = \frac{1}{N}\sum |x_i - \mu|,Rata-rata jarak simpangan absolut dari nilai mean.,0.002088,0.002088,1
+18,`median_abs_deviation(signal)`,Median absolute deviation,Statistical,MAD_{med} = \text{median}(|x_i - \tilde{x}|),"Median deviasi absolut terhadap nilai median, sangat resisten outlier.",0.001800,0.001800,1
+19,`pk_pk_distance(signal)`,Peak to peak distance,Statistical,\Delta x = x_{max} - x_{min},Rentang jarak penuh dari puncak tertinggi ke lembah terendah.,0.015646,0.015646,1
+20,`rms(signal)`,Root mean square,Statistical,x_{rms} = \sqrt{\frac{1}{N}\sum x_i^2},Akar rata-rata kuadrat magnitudo efektif sinyal.,0.028702,0.028702,1
+21,`skewness(signal)`,Skewness,Statistical,\text{Skew} = \frac{\mu_3}{\sigma^3},Tingkat kemencengan asimetri kurva distribusi.,0.224357,0.224357,1
+22,`auc(signal)`,Area under the curve,Temporal,AUC \approx \sum \frac{x_i + x_{i+1}}{2} \Delta t,Luas total area di bawah kurva sinyal dengan kaidah trapesium numerik.,0.104004,0.104004,1
+23,`autocorr(signal)`,Autocorrelation,Temporal,\tau^* = \arg\min_\tau (R_{xx}(\tau) \le 1/e),Lag waktu pertama saat autokorelasi sinyal meluruh di bawah 1/e.,2.000000,2.000000,1
+24,`calc_centroid(signal)`,Centroid,Temporal,C_t = \frac{\sum t_i \cdot x_i}{\sum x_i},Pusat massa waktu (centroid temporal) distribusi energi sinyal.,1.816485,1.816485,1
+25,`distance(signal)`,Signal distance,Temporal,D = \sum \sqrt{(\Delta t)^2 + (\Delta x)^2},Total panjang lintasan 2 dimensi pergerakan sinyal sepanjang waktu.,364.001153,364.001153,1
+26,`lempel_ziv(signal)`,Lempel-Ziv complexity,Temporal,LZC_{norm} = \frac{c(n)\log_2(n)}{n},Kompleksitas terstandarisasi laju pembuatan sub-pola biner baru sinyal.,0.189041,0.189041,1
+27,`mean_abs_diff(signal)`,Mean absolute diff,Temporal,\overline{|\Delta x|} = \frac{1}{N-1}\sum |x_{i+1} - x_i|,Rerata perubahan absolut harian konsentrasi CO antardua hari berurutan.,0.001781,0.001781,1
+28,`mean_diff(signal)`,Mean diff,Temporal,\overline{\Delta x} = \frac{x_N - x_1}{N-1},Rerata perbedaan terarah harian sinyal yang merefleksikan tren neto.,0.000002,0.000002,1
+29,`median_abs_diff(signal)`,Median absolute diff,Temporal,\widetilde{|\Delta x|} = \text{median}(|x_{i+1} - x_i|),Nilai tengah (median) perubahan absolut konsentrasi antardua titik waktu.,0.001196,0.001196,1
+30,`median_diff(signal)`,Median diff,Temporal,\widetilde{\Delta x} = \text{median}(x_{i+1} - x_i),Nilai median dari perbedaan harian berarah sinyal.,-0.000085,-0.000085,1
+31,`negative_turning(signal)`,Negative turning points,Temporal,N_{neg} = \sum \mathbf{1}_{x_i < x_{i-1} \land x_i < x_{i+1}},Jumlah titik balik lembah (lokal minimum) pada lintasan sinyal.,72.000000,72.000000,1
+32,`neighbourhood_peaks(signal)`,Neighbourhood peaks,Temporal,N_{peaks} = \sum \mathbf{1}_{x_i = \max(x_{i-n:i+n})},Jumlah puncak lokal menonjol dalam jendela ketetanggaan sampel.,16.000000,16.000000,1
+33,`positive_turning(signal)`,Positive turning points,Temporal,N_{pos} = \sum \mathbf{1}_{x_i > x_{i-1} \land x_i > x_{i+1}},Jumlah titik balik puncak (lokal maksimum) transisi naik ke turun.,71.000000,71.000000,1
+34,`slope(signal)`,Slope,Temporal,\beta = \frac{\sum (t_i - \bar{t})(x_i - \bar{x})}{\sum (t_i - \bar{t})^2},Gradien kemiringan garis regresi tren linear sinyal.,-0.000000,-0.000000,1
+35,`sum_abs_diff(signal)`,Sum absolute diff,Temporal,\sum |\Delta x| = \sum |x_{i+1} - x_i|,Jumlahan total seluruh fluktuasi perubahan absolut sinyal.,0.648295,0.648295,1
+36,`zero_cross(signal)`,Zero crossing rate,Temporal,ZCR = \sum \mathbf{1}_{x_i \cdot x_{i+1} < 0},Frekuensi sinyal melintasi garis dasar nol.,0.000000,0.000000,1
+37,`fundamental_frequency(signal)`,Fundamental frequency,Spectral,f_0 = \arg\max_{f > 0} |X(f)|,Frekuensi fundamental terendah dengan puncak spektrum Fourier terbesar.,0.273973,0.273973,1
+38,`human_range_energy(signal)`,Human range energy,Spectral,"E_{human} = \frac{\sum_{f \in [0.6, 2.5]} |X(f)|^2}{\sum_f |X(f)|^2}",Rasio energi spektrum pada rentang frekuensi gerak manusia (0.6 - 2.5 Hz).,0.000798,0.000798,1
+39,`lpcc(signal)`,LPCC,Spectral,c_m = a_m + \sum \left(1 - \frac{k}{m}\right) a_k c_{m-k},12 koefisien kepstral prediksi linear amplop spektral autoregresif.,"Array (12 nilai, range: [0.5835, 1.3585])","12 koefisien: 0: 0.5835, 1: 1.3585, 10: 0.9244, ...",12
+40,`max_frequency(signal)`,Maximum frequency,Spectral,f_{max} = \max \{f : |X(f)| > \text{thresh}\},Frekuensi tertinggi yang memiliki kontribusi daya signifikan.,39.178082,39.178082,1
+41,`max_power_spectrum(signal)`,Max power spectrum,Spectral,P_{max} = \max_f S_{xx}(f),Kerapatan daya spektrum maksimum (peak PSD) sinyal.,0.181557,0.181557,1
+42,`median_frequency(signal)`,Median frequency,Spectral,\sum_0^{f_{med}} S(f) = \frac{1}{2}\sum S(f),Frekuensi median pemisah bidang daya spektrum menjadi dua bagian sama.,0.000000,0.000000,1
+43,`mfcc(signal)`,MFCC,Spectral,MFCC_m = \sum \log(S_k)\cos[m(k-0.5)\pi/M],12 koefisien kepstral frekuensi Mel representasi filter-bank persepsi.,"Array (12 nilai, range: [-31.4257, 87.0460])","12 koefisien: 0: -14.8010, 1: -23.4345, 10: 77.6286, ...",12
+44,`power_bandwidth(signal)`,Power bandwidth,Spectral,BW = f_{high} - f_{low},Lebar pita frekuensi yang memuat konsentrasi energi spektrum dominan.,39.178082,39.178082,1
+45,`spectral_centroid(signal)`,Spectral centroid,Spectral,C_{spec} = \frac{\sum f_k |X_k|}{\sum |X_k|},Titik pusat massa gravitasi dari distribusi spektrum frekuensi Fourier.,7.929206,7.929206,1
+46,`spectral_decrease(signal)`,Spectral decrease,Spectral,D_{spec} = \frac{1}{\sum |X_k|} \sum \frac{|X_k| - |X_1|}{k-1},Tingkat penurunan laju amplitudo spektral pada frekuensi tinggi.,-8.151132,-8.151132,1
+47,`spectral_distance(signal)`,Spectral distance,Spectral,D_{sd} = \sum |S_{xx}(f_k) - \bar{S}|^2,Jarak kuadrat sebaran spektrum daya terhadap nilai rata-ratanya.,-1112.202227,-1112.202227,1
+48,`spectral_entropy(signal)`,Spectral entropy,Spectral,H_{spec} = -\sum p_k \log_2(p_k),Derajat ketidakberaturan distribusi kerapatan daya spektral frekuensi.,0.851373,0.851373,1
+49,`spectral_kurtosis(signal)`,Spectral kurtosis,Spectral,"K_{spec} = \frac{\mu_{4,spec}}{\sigma_{spec}^4} - 3",Keruncingan sebaran energi di sekitar centroid spektrum frekuensi.,4.501461,4.501461,1
+50,`spectral_positive_turning(signal)`,Spectral positive turning points,Spectral,N_{s-pos} = \sum \mathbf{1}_{|X_k| > |X_{k-1}| \land |X_k| > |X_{k+1}|},Jumlah puncak positif pada kurva transformasi Fourier magnitudo spektrum.,58.000000,58.000000,1
+51,`spectral_roll_off(signal)`,Spectral roll-off,Spectral,\sum_1^{f_{ro}} |X(f)| = 0.95 \sum |X(f)|,Frekuensi batas atas tempat 95% total energi spektral terakumulasi.,39.178082,39.178082,1
+52,`spectral_roll_on(signal)`,Spectral roll-on,Spectral,\sum_1^{f_{ron}} |X(f)| = 0.05 \sum |X(f)|,Frekuensi batas bawah tempat 5% energi spektral awal mulai terhimpun.,0.000000,0.000000,1
+53,`spectral_skewness(signal)`,Spectral skewness,Spectral,"S_{spec} = \frac{\mu_{3,spec}}{\sigma_{spec}^3}",Asimetri kemencengan kurva densitas spektrum frekuensi.,1.634549,1.634549,1
+54,`spectral_slope(signal)`,Spectral slope,Spectral,\text{Slope}_{spec} = \frac{\Delta |X|}{\Delta f},Kemiringan garis regresi amplitudo Fourier terhadap frekuensi.,-0.000444,-0.000444,1
+55,`spectral_spread(signal)`,Spectral spread,Spectral,\sigma_{spec} = \sqrt{\sum (f_k - C_{spec})^2 p_k},Deviasi standar penyebaran frekuensi di sekitar pusat centroid spektral.,13.189140,13.189140,1
+56,`spectral_variation(signal)`,Spectral variation,Spectral,"V_{spec} = 1 - \text{korelasi}(|X_k|, |X_{k-1}|)",Variasi fluktuasi bentuk spektrum antar komponen frekuensi berturutan.,0.730012,0.730012,1
+57,`spectrogram_mean_coeff(signal)`,Spectrogram mean coefficient,Spectral,\overline{PSD}(f_b) = \frac{1}{M}\sum |STFT|^2,32 koefisien rata-rata PSD pada tiap pita frekuensi spektrogram waktu.,"Array (32 nilai, range: [0.0000, 0.0000])","32 koefisien: 0.0Hz: 0.0000, 1.61Hz: 0.0000, 11.29Hz: 0.0000, ...",32
+58,`wavelet_abs_mean(signal)`,Wavelet absolute mean,Spectral,"\overline{|W(a)|} = \frac{1}{N}\sum |CWT(a, t)|",9 koefisien rata-rata absolut Wavelet Mexican Hat pada skala 1-9.,"Array (9 nilai, range: [0.0001, 0.0037])","9 koefisien: 12.5Hz: 0.0004, 2.78Hz: 0.0037, 25.0Hz: 0.0001, ...",9
+59,`wavelet_energy(signal)`,Wavelet energy,Spectral,"E_w(a) = \sqrt{\frac{1}{N}\sum |CWT(a,t)|^2}",9 nilai energi spektral koefisien Wavelet pada skala 1-9.,"Array (9 nilai, range: [0.0025, 0.0113])","9 koefisien: 12.5Hz: 0.0036, 2.78Hz: 0.0113, 25.0Hz: 0.0025, ...",9
+60,`wavelet_entropy(signal)`,Wavelet entropy,Spectral,H_w = -\sum p_j \log_2(p_j),Entropi multi-resolusi distribusi energi skala wavelet kontinyu.,2.130313,2.130313,1
+61,`wavelet_std(signal)`,Wavelet standard deviation,Spectral,"\sigma_w(a) = \text{std}(CWT(a, t))",9 nilai deviasi standar wavelet kontinyu pada skala 1-9.,"Array (9 nilai, range: [0.0025, 0.0107])","9 koefisien: 12.5Hz: 0.0036, 2.78Hz: 0.0107, 25.0Hz: 0.0025, ...",9
+62,`wavelet_var(signal)`,Wavelet variance,Spectral,"\text{Var}_w(a) = \text{var}(CWT(a, t))",9 nilai variansi koefisien wavelet kontinyu pada skala 1-9.,"Array (9 nilai, range: [0.0000, 0.0001])","9 koefisien: 12.5Hz: 0.0000, 2.78Hz: 0.0001, 25.0Hz: 0.0000, ...",9
+63,`dfa(signal)`,Detrended fluctuation analysis,Fractal,F(s) \propto s^\alpha,Eksponen skala ketergantungan jarak jauh sinyal non-stasioner.,0.827578,0.827578,1
+64,`higuchi_fractal_dimension(signal)`,Higuchi fractal dimension,Fractal,L(k) \propto k^{-D_H},Dimensi fraktal ketidakteraturan geometri kurva pada skala interval.,1.911793,1.911793,1
+65,`hurst_exponent(signal)`,Hurst exponent,Fractal,(R/S)_n \propto n^H,Eksponen memori jangka panjang (H > 0.5: pola tren berlanjut/persisten).,0.764445,0.764445,1
+66,`maximum_fractal_length(signal)`,Maximum fractal length,Fractal,MFL = \lim_{k \to 1} \log(L(k)),Panjang kurva fraktal maksimum pada batas skala terkecil.,-0.101520,-0.101520,1
+67,`mse(signal)`,Multiscale entropy,Fractal,MSE = \sum_{\tau} \text{SampEn}(y^{(\tau)}),Entropi sampel multi-skala struktur dinamika deret waktu.,1.314635,1.314635,1
+68,`petrosian_fractal_dimension(signal)`,Petrosian fractal dimension,Fractal,D_P = \frac{\log_{10} N}{\log_{10} N + \log_{10}(N/(N+0.4 N_\Delta))},Dimensi fraktal kompleksitas berbasis pembalikan tanda turunan pertama.,1.025300,1.025300,1

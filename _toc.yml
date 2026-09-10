@@ -7,3 +7,7 @@ chapters:
       - file: pertemuan-1/business-understanding
       - file: pertemuan-1/data-understanding
   - file: pertemuan-2/CR (Create & Read)-Data Analysis
+  - file: pertemuan-3/Outlier detec and Repair Missing.md
+    sections:
+      - file: pertemuan-3/Melakukan Extraksi Fitur Tsfel.md
+      
