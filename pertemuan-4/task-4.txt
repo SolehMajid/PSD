@@ -1,0 +1,2 @@
+membuat grafik data polutan menggunakan 4 polutan
+gabungkan data semua mahasiswa menjadi 1.

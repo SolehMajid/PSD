@@ -1,0 +1,2 @@
+Melibatkan banyak method apabila ingin mengetahui lebih akurat mengetahui outlier. melakukan beberapa kali detection.
+
