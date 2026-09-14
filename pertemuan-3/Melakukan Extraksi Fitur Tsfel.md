@@ -4,17 +4,43 @@
 
 Ekstraksi fitur deret waktu (*time-series feature extraction*) merupakan tahapan krusial dalam rekayasa data (*feature engineering*) untuk mengubah sinyal runtun waktu berdimensi tinggi menjadi representasi numerik ringkas yang sarat makna fisis, statistik, dan dinamis. Pada data kualitas udara, fluktuasi harian konsentrasi gas Karbon Monoksida (**CO**) di Kabupaten Bangkalan tidak hanya mencerminkan besaran emisi rata-rata, melainkan menyimpan karakteristik dinamika periodisitas cuaca, dispersi angin, aktivitas antropogenik kendaraan bermotor, serta persistensi memori jangka panjang.
 
+Tahapan ini merupakan kelanjutan langsung dari proses pembersihan *outlier* dan imputasi *missing value* pada notebook [tambal-missing.ipynb](tambal-missing.ipynb), di mana dataset input yang digunakan adalah `polutan_co_bangkalan_final_clean.csv` (365 hari lengkap bebas nilai kosong). Seluruh proses ekstraksi fitur diimplementasikan dan dieksekusi pada notebook [ekstaksi_fitur.ipynb](ekstaksi_fitur.ipynb).
+
 Untuk mengekstraksi informasi tersebut secara komprehensif tanpa kehilangan aspek penting data, digunakan pustaka **TSFEL (Time Series Feature Extraction Library)**. TSFEL merupakan kerangka kerja komputasi deret waktu mutakhir yang mampu mengekstraksi seluruh spektrum fitur sinyal secara otomatis ke dalam empat domain keilmuan:
 
 1. **Statistical Domain (21 Fitur)**: Mengukur tendensi sentral, dispersi, keruncingan kurva, asimetri, dan fungsi distribusi probabilitas data.
 2. **Temporal Domain (15 Fitur)**: Mengukur laju perubahan antarhari, autokorelasi, titik balik arah (*turning points*), panjang lintasan, dan kompleksitas deret.
 3. **Spectral Domain (26 Fitur)**: Menganalisis kandungan frekuensi melalui Transformasi Fourier Diskrit (FFT), Spektrogram STFT, Koefisien Kepstral (MFCC & LPCC), dan Transformasi Wavelet Kontinyu (CWT).
 4. **Fractal Domain (6 Fitur)**: Mengukur derajat ketidakteraturan (*self-similarity*), eksponen persistensi memori jangka panjang (*Hurst Exponent* & *DFA*), serta entropi multi-skala (*Multiscale Entropy*).
+
+### 1.1 Daftar 68 Fitur TSFEL Terstandarisasi & Reduksi "1 Fitur = 1 Nilai"
+
+Sesuai instruksi teknis, sebelum ekstraksi fitur dijalankan, seluruh fitur didaftarkan terlebih dahulu ke dalam list kode fitur terstandarisasi `f1_abs_energy` s/d `f68_zero_cross`.
+
+Fitur-fitur TSFEL yang memiliki nilai rentang (*range* / multi-dimensi / *array* koefisien) direduksi menjadi **tepat 1 nilai numerik representatif** (menggunakan rata-rata/*mean* seluruh koefisiennya) agar setiap fitur memiliki representasi skalar yang pasti dan konsisten:
+- **58 Fitur Skalar**: Menggunakan nilai numerik skalar eksak hasil komputasi TSFEL (misal: Mean = `0.028584`, Max = `0.036134`, Hurst = `0.764445`).
+- **10 Fitur Rentang Nilai (Array/Multi-Koefisien)**: Diagregasikan menjadi 1 nilai rerata (*mean*) dari seluruh koefisiennya:
+  1. `f14_ecdf`: Rerata 10 nilai kuantil ECDF (`0.015068`)
+  2. `f15_ecdf_percentile`: Rerata 2 ambang persentil P20 & P80 (`0.028493`)
+  3. `f16_ecdf_percentile_count`: Rerata cacah sampel C20 & C80 (`182.500000`)
+  4. `f27_lpcc`: Rerata 12 koefisien LPCC (`0.906560`)
+  5. `f38_mfcc`: Rerata 12 koefisien Mel MFCC (`19.939467`)
+  6. `f61_spectrogram_mean_coeff`: Rerata 32 koefisien daya frekuensi spektrogram (`0.000000`)
+  7. `f63_wavelet_abs_mean`: Rerata 9 koefisien absolut wavelet (`0.001668`)
+  8. `f64_wavelet_energy`: Rerata 9 koefisien energi spektral wavelet (`0.006869`)
+  9. `f66_wavelet_std`: Rerata 9 koefisien deviasi standar wavelet (`0.006642`)
+  10. `f67_wavelet_var`: Rerata 9 koefisien variansi wavelet (`0.000051`)
+
+Berikut adalah daftar lengkap 68 fitur TSFEL:
+```text
+f1_abs_energy	f2_auc	f3_autocorr	f4_average_power	f5_calc_centroid	f6_calc_max	f7_calc_mean	f8_calc_median	f9_calc_min	f10_calc_std	f11_calc_var	f12_dfa	f13_distance	f14_ecdf	f15_ecdf_percentile	f16_ecdf_percentile_count	f17_ecdf_slope	f18_entropy	f19_fundamental_frequency	f20_higuchi_fractal_dimension	f21_hist_mode	f22_human_range_energy	f23_hurst_exponent	f24_interq_range	f25_kurtosis	f26_lempel_ziv	f27_lpcc	f28_max_frequency	f29_max_power_spectrum	f30_maximum_fractal_length	f31_mean_abs_deviation	f32_mean_abs_diff	f33_mean_diff	f34_median_abs_deviation	f35_median_abs_diff	f36_median_diff	f37_median_frequency	f38_mfcc	f39_mse	f40_negative_turning	f41_neighbourhood_peaks	f42_petrosian_fractal_dimension	f43_pk_pk_distance	f44_positive_turning	f45_power_bandwidth	f46_rms	f47_skewness	f48_slope	f49_spectral_centroid	f50_spectral_decrease	f51_spectral_distance	f52_spectral_entropy	f53_spectral_kurtosis	f54_spectral_positive_turning	f55_spectral_roll_off	f56_spectral_roll_on	f57_spectral_skewness	f58_spectral_slope	f59_spectral_spread	f60_spectral_variation	f61_spectrogram_mean_coeff	f62_sum_abs_diff	f63_wavelet_abs_mean	f64_wavelet_energy	f65_wavelet_entropy	f66_wavelet_std	f67_wavelet_var	f68_zero_cross
+```
+
 ---
 
 ## 2. Alur Program & Eksekusi Kode Ekstraksi Fitur TSFEL
 
-Berikut adalah tahapan implementasi program Python untuk melakukan ekstraksi seluruh 68 fitur TSFEL pada kolom `CO`.
+Berikut adalah tahapan implementasi program Python pada notebook `ekstaksi_fitur.ipynb` untuk melakukan ekstraksi seluruh 68 fitur TSFEL pada kolom `CO`.
 
 ### 2.1 Memuat Dataset Bersih & Konfigurasi Fitur TSFEL
 
@@ -242,7 +268,7 @@ distribusi probabilitas, tendensi sentral, derajat dispersi, dan bentuk kurva se
   \hat{F}_n(t) = \frac{1}{N} \sum_{i=1}^{N} \mathbf{1}_{\{x_i \le t\}}
   $$
 - **Penjelasan Notasi Rumus**: Di mana $\mathbf{1}_{\{x_i \le t\}}$ bernilai 1 jika sampel $x_i \le t$ dan bernilai 0 jika sebaliknya.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`10 nilai kuantil (rentang: [0.1000, 1.0000])`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`0.015068`** *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 10 nilai kuantil rentang [0.0027 s/d 0.0274])*
 
 #### Fitur 10: `ecdf_percentile(signal[, percentile])` — ECDF Percentile
 
@@ -253,7 +279,7 @@ distribusi probabilitas, tendensi sentral, derajat dispersi, dan bentuk kurva se
   Q(p) = \inf \{x : \hat{F}_n(x) \ge p\}
   $$
 - **Penjelasan Notasi Rumus**: Di mana $Q(p)$ adalah nilai ambang batas pada fraksi persentil kumulatif $p \in \{0.2, 0.8\}$.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`2 koefisien: P20 = 0.026618, P80 = 0.030539`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`0.028493`** *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 2 koefisien persentil P20 = 0.0264, P80 = 0.0305)*
 
 #### Fitur 11: `ecdf_percentile_count(signal[, percentile])` — ECDF Percentile Count
 
@@ -264,7 +290,7 @@ distribusi probabilitas, tendensi sentral, derajat dispersi, dan bentuk kurva se
   C(p) = \sum_{i=1}^{N} \mathbf{1}_{\{x_i \le Q(p)\}}
   $$
 - **Penjelasan Notasi Rumus**: Di mana $C(p)$ adalah jumlah sampel kumulatif yang memenuhi kriteria nilai di bawah persentil $p$.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`2 nilai: C(0.2) = 73 hari, C(0.8) = 292 hari`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`182.500000`** *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 2 nilai count C(0.2) = 73 hari, C(0.8) = 292 hari)*
 
 #### Fitur 12: `ecdf_slope(signal[, p_init, p_end])` — ECDF Slope
 
@@ -582,7 +608,7 @@ komposisi frekuensi Fourier, spektrogram waktu-frekuensi, dekomposisi koefisien 
   c_m = a_m + \sum_{k=1}^{m-1} \left(1 - \frac{k}{m}\right) a_k c_{m-k}
   $$
 - **Penjelasan Notasi Rumus**: Di mana $a_k$ adalah koefisien filter LPC dan $c_m$ adalah koefisien kepstral urutan ke-$m$.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`12 koefisien (rentang: [0.5835, 1.3585])`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`0.906560`** *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 12 koefisien autoregresif rentang [0.5835 s/d 1.3585])*
 
 #### Fitur 40: `max_frequency(signal, fs)` — Maximum Frequency
 
@@ -626,7 +652,7 @@ komposisi frekuensi Fourier, spektrogram waktu-frekuensi, dekomposisi koefisien 
   MFCC_m = \sum_{k=1}^{M} \log(S_k) \cos\left[m\left(k - \frac{1}{2}\right)\frac{\pi}{M}\right]
   $$
 - **Penjelasan Notasi Rumus**: Di mana $S_k$ adalah energi pada filter bank Mel ke-$k$ dan $M$ adalah total jumlah filter bank.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`12 koefisien (rentang: [-31.4257, 87.0460])`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`19.939467`** *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 12 koefisien filter Mel rentang [-31.4257 s/d 87.0460])*
 
 #### Fitur 44: `power_bandwidth(signal, fs)` — Power Bandwidth
 
@@ -780,7 +806,7 @@ komposisi frekuensi Fourier, spektrogram waktu-frekuensi, dekomposisi koefisien 
   \overline{PSD}(f_b) = \frac{1}{M} \sum_{m=1}^{M} |STFT(m, f_b)|^2
   $$
 - **Penjelasan Notasi Rumus**: Di mana $STFT(m, f_b)$ adalah transformasi Fourier waktu singkat pada jendela waktu ke-$m$ dan pita frekuensi $f_b$.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`32 koefisien pita frekuensi (0.00 Hz s/d 50.00 Hz)`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`0.000000`** ($1.109002 \times 10^{-7}$) *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 32 koefisien pita frekuensi STFT)*
 
 #### Fitur 58: `wavelet_abs_mean(signal, fs[, wavelet, max_width])` — Wavelet Absolute Mean
 
@@ -791,7 +817,7 @@ komposisi frekuensi Fourier, spektrogram waktu-frekuensi, dekomposisi koefisien 
   \overline{|W(a)|} = \frac{1}{N} \sum_{i=1}^{N} |CWT(a, t_i)|
   $$
 - **Penjelasan Notasi Rumus**: Di mana $CWT(a, t_i)$ adalah koefisien wavelet pada skala dekomposisi $a \in [1, 9]$.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`9 koefisien skala (rentang: [0.0001, 0.0037])`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`0.001668`** *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 9 koefisien skala CWT rentang [0.0001 s/d 0.0037])*
 
 #### Fitur 59: `wavelet_energy(signal, fs[, wavelet, max_width])` — Wavelet Energy
 
@@ -802,7 +828,7 @@ komposisi frekuensi Fourier, spektrogram waktu-frekuensi, dekomposisi koefisien 
   E_w(a) = \sqrt{\frac{1}{N}\sum_{i=1}^{N} |CWT(a, t_i)|^2}
   $$
 - **Penjelasan Notasi Rumus**: Mencerminkan distribusi energi sinyal pada berbagai skala resolusi waktu-frekuensi.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`9 nilai skala (rentang: [0.0025, 0.0113])`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`0.006869`** *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 9 nilai skala CWT rentang [0.0025 s/d 0.0113])*
 
 #### Fitur 60: `wavelet_entropy(signal, fs[, wavelet, max_width])` — Wavelet Entropy
 
@@ -824,7 +850,7 @@ komposisi frekuensi Fourier, spektrogram waktu-frekuensi, dekomposisi koefisien 
   \sigma_w(a) = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\left(CWT(a, t_i) - \overline{CWT}(a)\right)^2}
   $$
 - **Penjelasan Notasi Rumus**: Mengukur variabilitas persebaran koefisien wavelet pada setiap skala resolusi.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`9 nilai skala (rentang: [0.0025, 0.0107])`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`0.006642`** *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 9 nilai skala CWT rentang [0.0025 s/d 0.0107])*
 
 #### Fitur 62: `wavelet_var(signal, fs[, wavelet, max_width])` — Wavelet Variance
 
@@ -835,7 +861,7 @@ komposisi frekuensi Fourier, spektrogram waktu-frekuensi, dekomposisi koefisien 
   \text{Var}_w(a) = \frac{1}{N}\sum_{i=1}^{N}\left(CWT(a, t_i) - \overline{CWT}(a)\right)^2
   $$
 - **Penjelasan Notasi Rumus**: Mengukur daya variansi fluktuasi sinyal pada skala multi-resolusi waktu-frekuensi.
-- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`9 nilai skala (rentang: [0.0000, 0.0001])`**
+- **Nilai Hasil Ekstraksi (CO Bangkalan)**: **`0.000051`** ($5.113700 \times 10^{-5}$) *(1 Nilai Numerik Jelas / Rerata Mean; Asli: 9 nilai skala CWT rentang [0.0000 s/d 0.0001])*
 
 ### 4.4 Domain Fractal (6 Fitur)
 
@@ -910,91 +936,203 @@ derajat fraktalitas, sifat *self-similarity*, kompleksitas struktural, eksponen 
 
 ---
 
-## 5. Tabel Ringkasan Seluruh 68 Fitur TSFEL
+## 5. Tabel Ringkasan Seluruh 68 Fitur TSFEL (1 Fitur 1 Nilai Jelas)
 
-Tabel di bawah ini merangkum secara terpadu seluruh 68 fitur TSFEL yang telah diekstrak pada konsentrasi polutan CO Bangkalan:
+Tabel di bawah ini merangkum secara terpadu seluruh **68 fitur TSFEL** yang telah diekstrak pada konsentrasi polutan CO Bangkalan, di mana setiap fitur direpresentasikan oleh **1 nilai numerik yang jelas dan pasti** serta diberi **kode fitur standar** (`f1_abs_energy` s/d `f68_zero_cross`):
+- Untuk **58 fitur skalar**, nilai yang disajikan adalah nilai eksak hasil komputasi TSFEL.
+- Untuk **10 fitur multi-output (array/koefisien)**, nilai yang disajikan adalah nilai agregat rata-rata (*mean*) koefisiennya untuk menjamin standardisasi dimensi konsisten.
 
-| No | Fungsi TSFEL | Nama Fitur | Domain | Rumus Singkat | Nilai Hasil Ekstraksi |
-|:---:|:---|:---|:---:|:---|:---:|
-| 1 | `abs_energy(signal)` | Absolute energy | Statistical | $E = \sum_{i=1}^{N} x_i^2$ | 0.300680 |
-| 2 | `average_power(signal)` | Average power | Statistical | $P_{avg} = \frac{1}{N} \sum_{i=1}^{N} x_i^2$ | 0.082604 |
-| 3 | `calc_max(signal)` | Max | Statistical | $x_{max} = \max_{1 \le i \le N}(x_i)$ | 0.036134 |
-| 4 | `calc_mean(signal)` | Mean | Statistical | $\mu = \frac{1}{N} \sum_{i=1}^{N} x_i$ | 0.028584 |
-| 5 | `calc_median(signal)` | Median | Statistical | $\tilde{x} = \text{median}(x)$ | 0.028389 |
-| 6 | `calc_min(signal)` | Min | Statistical | $x_{min} = \min_{1 \le i \le N}(x_i)$ | 0.020487 |
-| 7 | `calc_std(signal)` | Standard deviation | Statistical | $\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}$ | 0.002595 |
-| 8 | `calc_var(signal)` | Variance | Statistical | $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2$ | 0.000007 |
-| 9 | `ecdf(signal)` | ECDF | Statistical | $\hat{F}_n(t) = \frac{1}{N} \sum_{i=1}^N \mathbf{1}_{x_i \le t}$ | Array (10 nilai, range: [0.0027, 0.0274]) |
-| 10 | `ecdf_percentile(signal)` | ECDF Percentile | Statistical | $Q(p) = \inf\{x : \hat{F}_n(x) \ge p\}$ | Array (2 nilai, range: [0.0264, 0.0305]) |
-| 11 | `ecdf_percentile_count(signal)` | ECDF Percentile Count | Statistical | $C(p) = \sum_{i=1}^N \mathbf{1}_{x_i \le Q(p)}$ | Array (2 nilai, range: [73.0000, 292.0000]) |
-| 12 | `ecdf_slope(signal)` | ECDF Slope | Statistical | $S_{ecdf} = \frac{p_{end} - p_{init}}{Q(p_{end}) - Q(p_{init})}$ | 127.679760 |
-| 13 | `entropy(signal)` | Entropy | Statistical | $H(X) = -\sum p(x_i) \log_2 p(x_i)$ | 1.000000 |
-| 14 | `hist_mode(signal)` | Histogram mode | Statistical | $M_{hist} = \text{center}(\arg\max \text{Bin})$ | 0.027528 |
-| 15 | `interq_range(signal)` | Interquartile range | Statistical | $IQR = Q_3 - Q_1$ | 0.003516 |
-| 16 | `kurtosis(signal)` | Kurtosis | Statistical | $\text{Kurt} = \frac{\mu_4}{\sigma^4} - 3$ | 0.070144 |
-| 17 | `mean_abs_deviation(signal)` | Mean absolute deviation | Statistical | $MAD = \frac{1}{N}\sum \vert x_i - \mu\vert $ | 0.002088 |
-| 18 | `median_abs_deviation(signal)` | Median absolute deviation | Statistical | $MAD_{med} = \text{median}(\vert x_i - \tilde{x}\vert )$ | 0.001800 |
-| 19 | `pk_pk_distance(signal)` | Peak to peak distance | Statistical | $\Delta x = x_{max} - x_{min}$ | 0.015646 |
-| 20 | `rms(signal)` | Root mean square | Statistical | $x_{rms} = \sqrt{\frac{1}{N}\sum x_i^2}$ | 0.028702 |
-| 21 | `skewness(signal)` | Skewness | Statistical | $\text{Skew} = \frac{\mu_3}{\sigma^3}$ | 0.224357 |
-| 22 | `auc(signal)` | Area under the curve | Temporal | $AUC \approx \sum \frac{x_i + x_{i+1}}{2} \Delta t$ | 0.104004 |
-| 23 | `autocorr(signal)` | Autocorrelation | Temporal | $\tau^* = \arg\min_\tau (R_{xx}(\tau) \le 1/e)$ | 2.000000 |
-| 24 | `calc_centroid(signal)` | Centroid | Temporal | $C_t = \frac{\sum t_i \cdot x_i}{\sum x_i}$ | 1.816485 |
-| 25 | `distance(signal)` | Signal distance | Temporal | $D = \sum \sqrt{(\Delta t)^2 + (\Delta x)^2}$ | 364.001153 |
-| 26 | `lempel_ziv(signal)` | Lempel-Ziv complexity | Temporal | $LZC_{norm} = \frac{c(n)\log_2(n)}{n}$ | 0.189041 |
-| 27 | `mean_abs_diff(signal)` | Mean absolute diff | Temporal | $\overline{\vert \Delta x\vert } = \frac{1}{N-1}\sum \vert x_{i+1} - x_i\vert $ | 0.001781 |
-| 28 | `mean_diff(signal)` | Mean diff | Temporal | $\overline{\Delta x} = \frac{x_N - x_1}{N-1}$ | 0.000002 |
-| 29 | `median_abs_diff(signal)` | Median absolute diff | Temporal | $\widetilde{\vert \Delta x\vert } = \text{median}(\vert x_{i+1} - x_i\vert )$ | 0.001196 |
-| 30 | `median_diff(signal)` | Median diff | Temporal | $\widetilde{\Delta x} = \text{median}(x_{i+1} - x_i)$ | -0.000085 |
-| 31 | `negative_turning(signal)` | Negative turning points | Temporal | $N_{neg} = \sum \mathbf{1}_{x_i < x_{i-1} \land x_i < x_{i+1}}$ | 72.000000 |
-| 32 | `neighbourhood_peaks(signal)` | Neighbourhood peaks | Temporal | $N_{peaks} = \sum \mathbf{1}_{x_i = \max(x_{i-n:i+n})}$ | 16.000000 |
-| 33 | `positive_turning(signal)` | Positive turning points | Temporal | $N_{pos} = \sum \mathbf{1}_{x_i > x_{i-1} \land x_i > x_{i+1}}$ | 71.000000 |
-| 34 | `slope(signal)` | Slope | Temporal | $\beta = \frac{\sum (t_i - \bar{t})(x_i - \bar{x})}{\sum (t_i - \bar{t})^2}$ | -0.000000 |
-| 35 | `sum_abs_diff(signal)` | Sum absolute diff | Temporal | $\sum \vert \Delta x\vert  = \sum \vert x_{i+1} - x_i\vert $ | 0.648295 |
-| 36 | `zero_cross(signal)` | Zero crossing rate | Temporal | $ZCR = \sum \mathbf{1}_{x_i \cdot x_{i+1} < 0}$ | 0.000000 |
-| 37 | `fundamental_frequency(signal)` | Fundamental frequency | Spectral | $f_0 = \arg\max_{f > 0} \vert X(f)\vert $ | 0.273973 |
-| 38 | `human_range_energy(signal)` | Human range energy | Spectral | $E_{human} = \frac{\sum_{f \in [0.6, 2.5]} \vert X(f)\vert ^2}{\sum_f \vert X(f)\vert ^2}$ | 0.000798 |
-| 39 | `lpcc(signal)` | LPCC | Spectral | $c_m = a_m + \sum \left(1 - \frac{k}{m}\right) a_k c_{m-k}$ | Array (12 nilai, range: [0.5835, 1.3585]) |
-| 40 | `max_frequency(signal)` | Maximum frequency | Spectral | $f_{max} = \max \{f : \vert X(f)\vert  > \text{thresh}\}$ | 39.178082 |
-| 41 | `max_power_spectrum(signal)` | Max power spectrum | Spectral | $P_{max} = \max_f S_{xx}(f)$ | 0.181557 |
-| 42 | `median_frequency(signal)` | Median frequency | Spectral | $\sum_0^{f_{med}} S(f) = \frac{1}{2}\sum S(f)$ | 0.000000 |
-| 43 | `mfcc(signal)` | MFCC | Spectral | $MFCC_m = \sum \log(S_k)\cos[m(k-0.5)\pi/M]$ | Array (12 nilai, range: [-31.4257, 87.0460]) |
-| 44 | `power_bandwidth(signal)` | Power bandwidth | Spectral | $BW = f_{high} - f_{low}$ | 39.178082 |
-| 45 | `spectral_centroid(signal)` | Spectral centroid | Spectral | $C_{spec} = \frac{\sum f_k \vert X_k\vert }{\sum \vert X_k\vert }$ | 7.929206 |
-| 46 | `spectral_decrease(signal)` | Spectral decrease | Spectral | $D_{spec} = \frac{1}{\sum \vert X_k\vert } \sum \frac{\vert X_k\vert  - \vert X_1\vert }{k-1}$ | -8.151132 |
-| 47 | `spectral_distance(signal)` | Spectral distance | Spectral | $D_{sd} = \sum \vert S_{xx}(f_k) - \bar{S}\vert ^2$ | -1112.202227 |
-| 48 | `spectral_entropy(signal)` | Spectral entropy | Spectral | $H_{spec} = -\sum p_k \log_2(p_k)$ | 0.851373 |
-| 49 | `spectral_kurtosis(signal)` | Spectral kurtosis | Spectral | $K_{spec} = \frac{\mu_{4,spec}}{\sigma_{spec}^4} - 3$ | 4.501461 |
-| 50 | `spectral_positive_turning(signal)` | Spectral positive turning points | Spectral | $N_{s-pos} = \sum \mathbf{1}_{\vert X_k\vert  > \vert X_{k-1}\vert  \land \vert X_k\vert  > \vert X_{k+1}\vert }$ | 58.000000 |
-| 51 | `spectral_roll_off(signal)` | Spectral roll-off | Spectral | $\sum_1^{f_{ro}} \vert X(f)\vert  = 0.95 \sum \vert X(f)\vert $ | 39.178082 |
-| 52 | `spectral_roll_on(signal)` | Spectral roll-on | Spectral | $\sum_1^{f_{ron}} \vert X(f)\vert  = 0.05 \sum \vert X(f)\vert $ | 0.000000 |
-| 53 | `spectral_skewness(signal)` | Spectral skewness | Spectral | $S_{spec} = \frac{\mu_{3,spec}}{\sigma_{spec}^3}$ | 1.634549 |
-| 54 | `spectral_slope(signal)` | Spectral slope | Spectral | $\text{Slope}_{spec} = \frac{\Delta \vert X\vert }{\Delta f}$ | -0.000444 |
-| 55 | `spectral_spread(signal)` | Spectral spread | Spectral | $\sigma_{spec} = \sqrt{\sum (f_k - C_{spec})^2 p_k}$ | 13.189140 |
-| 56 | `spectral_variation(signal)` | Spectral variation | Spectral | $V_{spec} = 1 - \text{korelasi}(\vert X_k\vert , \vert X_{k-1}\vert )$ | 0.730012 |
-| 57 | `spectrogram_mean_coeff(signal)` | Spectrogram mean coefficient | Spectral | $\overline{PSD}(f_b) = \frac{1}{M}\sum \vert STFT\vert ^2$ | Array (32 nilai, range: [0.0000, 0.0000]) |
-| 58 | `wavelet_abs_mean(signal)` | Wavelet absolute mean | Spectral | $\overline{\vert W(a)\vert } = \frac{1}{N}\sum \vert CWT(a, t)\vert $ | Array (9 nilai, range: [0.0001, 0.0037]) |
-| 59 | `wavelet_energy(signal)` | Wavelet energy | Spectral | $E_w(a) = \sqrt{\frac{1}{N}\sum \vert CWT(a,t)\vert ^2}$ | Array (9 nilai, range: [0.0025, 0.0113]) |
-| 60 | `wavelet_entropy(signal)` | Wavelet entropy | Spectral | $H_w = -\sum p_j \log_2(p_j)$ | 2.130313 |
-| 61 | `wavelet_std(signal)` | Wavelet standard deviation | Spectral | $\sigma_w(a) = \text{std}(CWT(a, t))$ | Array (9 nilai, range: [0.0025, 0.0107]) |
-| 62 | `wavelet_var(signal)` | Wavelet variance | Spectral | $\text{Var}_w(a) = \text{var}(CWT(a, t))$ | Array (9 nilai, range: [0.0000, 0.0001]) |
-| 63 | `dfa(signal)` | Detrended fluctuation analysis | Fractal | $F(s) \propto s^\alpha$ | 0.827578 |
-| 64 | `higuchi_fractal_dimension(signal)` | Higuchi fractal dimension | Fractal | $L(k) \propto k^{-D_H}$ | 1.911793 |
-| 65 | `hurst_exponent(signal)` | Hurst exponent | Fractal | $(R/S)_n \propto n^H$ | 0.764445 |
-| 66 | `maximum_fractal_length(signal)` | Maximum fractal length | Fractal | $MFL = \lim_{k \to 1} \log(L(k))$ | -0.101520 |
-| 67 | `mse(signal)` | Multiscale entropy | Fractal | $MSE = \sum_{\tau} \text{SampEn}(y^{(\tau)})$ | 1.314635 |
-| 68 | `petrosian_fractal_dimension(signal)` | Petrosian fractal dimension | Fractal | $D_P = \frac{\log_{10} N}{\log_{10} N + \log_{10}(N/(N+0.4 N_\Delta))}$ | 1.025300 |
+| No | Kode Fitur | Fungsi TSFEL | Nama Fitur | Domain | Nilai Jelas (1 Fitur 1 Nilai) | Tipe Dimensi & Detail Nilai | Rumus Singkat |
+|:---:|:---:|:---|:---|:---:|:---:|:---|:---:|
+| 1 | `f1_abs_energy` | `abs_energy(signal)` | Absolute energy | Statistical | **`0.300680`** | Skalar Tunggal | $E = \sum_{i=1}^{N} x_i^2$ |
+| 2 | `f2_auc` | `auc(signal)` | Area under the curve | Temporal | **`0.104004`** | Skalar Tunggal | $AUC \approx \sum \frac{x_i + x_{i+1}}{2} \Delta t$ |
+| 3 | `f3_autocorr` | `autocorr(signal)` | Autocorrelation | Temporal | **`2.000000`** | Skalar Tunggal | $\tau^* = \arg\min_\tau (R_{xx}(\tau) \le 1/e)$ |
+| 4 | `f4_average_power` | `average_power(signal)` | Average power | Statistical | **`0.082604`** | Skalar Tunggal | $P_{avg} = \frac{1}{N} \sum_{i=1}^{N} x_i^2$ |
+| 5 | `f5_calc_centroid` | `calc_centroid(signal)` | Centroid | Temporal | **`1.816485`** | Skalar Tunggal | $C_t = \frac{\sum t_i \cdot x_i}{\sum x_i}$ |
+| 6 | `f6_calc_max` | `calc_max(signal)` | Max | Statistical | **`0.036134`** | Skalar Tunggal | $x_{max} = \max_{1 \le i \le N}(x_i)$ |
+| 7 | `f7_calc_mean` | `calc_mean(signal)` | Mean | Statistical | **`0.028584`** | Skalar Tunggal | $\mu = \frac{1}{N} \sum_{i=1}^{N} x_i$ |
+| 8 | `f8_calc_median` | `calc_median(signal)` | Median | Statistical | **`0.028389`** | Skalar Tunggal | $\tilde{x} = \text{median}(x)$ |
+| 9 | `f9_calc_min` | `calc_min(signal)` | Min | Statistical | **`0.020487`** | Skalar Tunggal | $x_{min} = \min_{1 \le i \le N}(x_i)$ |
+| 10 | `f10_calc_std` | `calc_std(signal)` | Standard deviation | Statistical | **`0.002595`** | Skalar Tunggal | $\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}$ |
+| 11 | `f11_calc_var` | `calc_var(signal)` | Variance | Statistical | **`0.000007 (6.73e-06)`** | Skalar Tunggal | $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2$ |
+| 12 | `f12_dfa` | `dfa(signal)` | Detrended fluctuation analysis | Fractal | **`0.827578`** | Skalar Tunggal | $F(s) \propto s^\alpha$ |
+| 13 | `f13_distance` | `distance(signal)` | Signal distance | Temporal | **`364.001153`** | Skalar Tunggal | $D = \sum \sqrt{(\Delta t)^2 + (\Delta x)^2}$ |
+| 14 | `f14_ecdf` | `ecdf(signal)` | ECDF | Statistical | **`0.015068`** | **Rerata Mean** (Asli: 0.0027, 0.0055, 0.0082, 0.0110, 0.0137, ... (total 10 koefisien)) | $\hat{F}_n(t) = \frac{1}{N} \sum_{i=1}^N \mathbf{1}_{x_i \le t}$ |
+| 15 | `f15_ecdf_percentile` | `ecdf_percentile(signal)` | ECDF Percentile | Statistical | **`0.028493`** | **Rerata Mean** (Asli: 0.0264, 0.0305) | $Q(p) = \inf\{x : \hat{F}_n(x) \ge p\}$ |
+| 16 | `f16_ecdf_percentile_count` | `ecdf_percentile_count(signal)` | ECDF Percentile Count | Statistical | **`182.500000`** | **Rerata Mean** (Asli: 73.0000, 292.0000) | $C(p) = \sum_{i=1}^N \mathbf{1}_{x_i \le Q(p)}$ |
+| 17 | `f17_ecdf_slope` | `ecdf_slope(signal)` | ECDF Slope | Statistical | **`127.679760`** | Skalar Tunggal | $S_{ecdf} = \frac{p_{end} - p_{init}}{Q(p_{end}) - Q(p_{init})}$ |
+| 18 | `f18_entropy` | `entropy(signal)` | Entropy | Statistical | **`1.000000`** | Skalar Tunggal | $H(X) = -\sum p(x_i) \log_2 p(x_i)$ |
+| 19 | `f19_fundamental_frequency` | `fundamental_frequency(signal)` | Fundamental frequency | Spectral | **`0.273973`** | Skalar Tunggal | $f_0 = \arg\max_{f > 0} \vert X(f)\vert $ |
+| 20 | `f20_higuchi_fractal_dimension` | `higuchi_fractal_dimension(signal)` | Higuchi fractal dimension | Fractal | **`1.911793`** | Skalar Tunggal | $L(k) \propto k^{-D_H}$ |
+| 21 | `f21_hist_mode` | `hist_mode(signal)` | Histogram mode | Statistical | **`0.027528`** | Skalar Tunggal | $M_{hist} = \text{center}(\arg\max \text{Bin})$ |
+| 22 | `f22_human_range_energy` | `human_range_energy(signal)` | Human range energy | Spectral | **`0.000798`** | Skalar Tunggal | $E_{human} = \frac{\sum_{f \in [0.6, 2.5]} \vert X(f)\vert ^2}{\sum_f \vert X(f)\vert ^2}$ |
+| 23 | `f23_hurst_exponent` | `hurst_exponent(signal)` | Hurst exponent | Fractal | **`0.764445`** | Skalar Tunggal | $(R/S)_n \propto n^H$ |
+| 24 | `f24_interq_range` | `interq_range(signal)` | Interquartile range | Statistical | **`0.003516`** | Skalar Tunggal | $IQR = Q_3 - Q_1$ |
+| 25 | `f25_kurtosis` | `kurtosis(signal)` | Kurtosis | Statistical | **`0.070144`** | Skalar Tunggal | $\text{Kurt} = \frac{\mu_4}{\sigma^4} - 3$ |
+| 26 | `f26_lempel_ziv` | `lempel_ziv(signal)` | Lempel-Ziv complexity | Temporal | **`0.189041`** | Skalar Tunggal | $LZC_{norm} = \frac{c(n)\log_2(n)}{n}$ |
+| 27 | `f27_lpcc` | `lpcc(signal)` | LPCC | Spectral | **`0.906560`** | **Rerata Mean** (Asli: 0.5835, 1.3585, 0.9244, 1.3585, 0.9244, ... (total 12 koefisien)) | $c_m = a_m + \sum \left(1 - \frac{k}{m}\right) a_k c_{m-k}$ |
+| 28 | `f28_max_frequency` | `max_frequency(signal)` | Maximum frequency | Spectral | **`39.178082`** | Skalar Tunggal | $f_{max} = \max \{f : \vert X(f)\vert  > \text{thresh}\}$ |
+| 29 | `f29_max_power_spectrum` | `max_power_spectrum(signal)` | Max power spectrum | Spectral | **`0.181557`** | Skalar Tunggal | $P_{max} = \max_f S_{xx}(f)$ |
+| 30 | `f30_maximum_fractal_length` | `maximum_fractal_length(signal)` | Maximum fractal length | Fractal | **`-0.101520`** | Skalar Tunggal | $MFL = \lim_{k \to 1} \log(L(k))$ |
+| 31 | `f31_mean_abs_deviation` | `mean_abs_deviation(signal)` | Mean absolute deviation | Statistical | **`0.002088`** | Skalar Tunggal | $MAD = \frac{1}{N}\sum \vert x_i - \mu\vert $ |
+| 32 | `f32_mean_abs_diff` | `mean_abs_diff(signal)` | Mean absolute diff | Temporal | **`0.001781`** | Skalar Tunggal | $\overline{\vert \Delta x\vert } = \frac{1}{N-1}\sum \vert x_{i+1} - x_i\vert $ |
+| 33 | `f33_mean_diff` | `mean_diff(signal)` | Mean diff | Temporal | **`0.000002 (2.21e-06)`** | Skalar Tunggal | $\overline{\Delta x} = \frac{x_N - x_1}{N-1}$ |
+| 34 | `f34_median_abs_deviation` | `median_abs_deviation(signal)` | Median absolute deviation | Statistical | **`0.001800`** | Skalar Tunggal | $MAD_{med} = \text{median}(\vert x_i - \tilde{x}\vert )$ |
+| 35 | `f35_median_abs_diff` | `median_abs_diff(signal)` | Median absolute diff | Temporal | **`0.001196`** | Skalar Tunggal | $\widetilde{\vert \Delta x\vert } = \text{median}(\vert x_{i+1} - x_i\vert )$ |
+| 36 | `f36_median_diff` | `median_diff(signal)` | Median diff | Temporal | **`-0.000085 (-8.53e-05)`** | Skalar Tunggal | $\widetilde{\Delta x} = \text{median}(x_{i+1} - x_i)$ |
+| 37 | `f37_median_frequency` | `median_frequency(signal)` | Median frequency | Spectral | **`0.000000`** | Skalar Tunggal | $\sum_0^{f_{med}} S(f) = \frac{1}{2}\sum S(f)$ |
+| 38 | `f38_mfcc` | `mfcc(signal)` | MFCC | Spectral | **`19.939467`** | **Rerata Mean** (Asli: -14.8010, -23.4345, 77.6286, 67.6200, -10.4088, ... (total 12 koefisien)) | $MFCC_m = \sum \log(S_k)\cos[m(k-0.5)\pi/M]$ |
+| 39 | `f39_mse` | `mse(signal)` | Multiscale entropy | Fractal | **`1.314635`** | Skalar Tunggal | $MSE = \sum_{\tau} \text{SampEn}(y^{(\tau)})$ |
+| 40 | `f40_negative_turning` | `negative_turning(signal)` | Negative turning points | Temporal | **`72.000000`** | Skalar Tunggal | $N_{neg} = \sum \mathbf{1}_{x_i < x_{i-1} \land x_i < x_{i+1}}$ |
+| 41 | `f41_neighbourhood_peaks` | `neighbourhood_peaks(signal)` | Neighbourhood peaks | Temporal | **`16.000000`** | Skalar Tunggal | $N_{peaks} = \sum \mathbf{1}_{x_i = \max(x_{i-n:i+n})}$ |
+| 42 | `f42_petrosian_fractal_dimension` | `petrosian_fractal_dimension(signal)` | Petrosian fractal dimension | Fractal | **`1.025300`** | Skalar Tunggal | $D_P = \frac{\log_{10} N}{\log_{10} N + \log_{10}(N/(N+0.4 N_\Delta))}$ |
+| 43 | `f43_pk_pk_distance` | `pk_pk_distance(signal)` | Peak to peak distance | Statistical | **`0.015646`** | Skalar Tunggal | $\Delta x = x_{max} - x_{min}$ |
+| 44 | `f44_positive_turning` | `positive_turning(signal)` | Positive turning points | Temporal | **`71.000000`** | Skalar Tunggal | $N_{pos} = \sum \mathbf{1}_{x_i > x_{i-1} \land x_i > x_{i+1}}$ |
+| 45 | `f45_power_bandwidth` | `power_bandwidth(signal)` | Power bandwidth | Spectral | **`39.178082`** | Skalar Tunggal | $BW = f_{high} - f_{low}$ |
+| 46 | `f46_rms` | `rms(signal)` | Root mean square | Statistical | **`0.028702`** | Skalar Tunggal | $x_{rms} = \sqrt{\frac{1}{N}\sum x_i^2}$ |
+| 47 | `f47_skewness` | `skewness(signal)` | Skewness | Statistical | **`0.224357`** | Skalar Tunggal | $\text{Skew} = \frac{\mu_3}{\sigma^3}$ |
+| 48 | `f48_slope` | `slope(signal)` | Slope | Temporal | **`-0.000000 (-4.84e-07)`** | Skalar Tunggal | $\beta = \frac{\sum (t_i - \bar{t})(x_i - \bar{x})}{\sum (t_i - \bar{t})^2}$ |
+| 49 | `f49_spectral_centroid` | `spectral_centroid(signal)` | Spectral centroid | Spectral | **`7.929206`** | Skalar Tunggal | $C_{spec} = \frac{\sum f_k \vert X_k\vert }{\sum \vert X_k\vert }$ |
+| 50 | `f50_spectral_decrease` | `spectral_decrease(signal)` | Spectral decrease | Spectral | **`-8.151132`** | Skalar Tunggal | $D_{spec} = \frac{1}{\sum \vert X_k\vert } \sum \frac{\vert X_k\vert  - \vert X_1\vert }{k-1}$ |
+| 51 | `f51_spectral_distance` | `spectral_distance(signal)` | Spectral distance | Spectral | **`-1112.202227`** | Skalar Tunggal | $D_{sd} = \sum \vert S_{xx}(f_k) - \bar{S}\vert ^2$ |
+| 52 | `f52_spectral_entropy` | `spectral_entropy(signal)` | Spectral entropy | Spectral | **`0.851373`** | Skalar Tunggal | $H_{spec} = -\sum p_k \log_2(p_k)$ |
+| 53 | `f53_spectral_kurtosis` | `spectral_kurtosis(signal)` | Spectral kurtosis | Spectral | **`4.501461`** | Skalar Tunggal | $K_{spec} = \frac{\mu_{4,spec}}{\sigma_{spec}^4} - 3$ |
+| 54 | `f54_spectral_positive_turning` | `spectral_positive_turning(signal)` | Spectral positive turning points | Spectral | **`58.000000`** | Skalar Tunggal | $N_{s-pos} = \sum \mathbf{1}_{\vert X_k\vert  > \vert X_{k-1}\vert  \land \vert X_k\vert  > \vert X_{k+1}\vert }$ |
+| 55 | `f55_spectral_roll_off` | `spectral_roll_off(signal)` | Spectral roll-off | Spectral | **`39.178082`** | Skalar Tunggal | $\sum_1^{f_{ro}} \vert X(f)\vert  = 0.95 \sum \vert X(f)\vert $ |
+| 56 | `f56_spectral_roll_on` | `spectral_roll_on(signal)` | Spectral roll-on | Spectral | **`0.000000`** | Skalar Tunggal | $\sum_1^{f_{ron}} \vert X(f)\vert  = 0.05 \sum \vert X(f)\vert $ |
+| 57 | `f57_spectral_skewness` | `spectral_skewness(signal)` | Spectral skewness | Spectral | **`1.634549`** | Skalar Tunggal | $S_{spec} = \frac{\mu_{3,spec}}{\sigma_{spec}^3}$ |
+| 58 | `f58_spectral_slope` | `spectral_slope(signal)` | Spectral slope | Spectral | **`-0.000444`** | Skalar Tunggal | $\text{Slope}_{spec} = \frac{\Delta \vert X\vert }{\Delta f}$ |
+| 59 | `f59_spectral_spread` | `spectral_spread(signal)` | Spectral spread | Spectral | **`13.189140`** | Skalar Tunggal | $\sigma_{spec} = \sqrt{\sum (f_k - C_{spec})^2 p_k}$ |
+| 60 | `f60_spectral_variation` | `spectral_variation(signal)` | Spectral variation | Spectral | **`0.730012`** | Skalar Tunggal | $V_{spec} = 1 - \text{korelasi}(\vert X_k\vert , \vert X_{k-1}\vert )$ |
+| 61 | `f61_spectrogram_mean_coeff` | `spectrogram_mean_coeff(signal)` | Spectrogram mean coefficient | Spectral | **`0.000000 (1.11e-07)`** | **Rerata Mean** (Asli: 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, ... (total 32 koefisien)) | $\overline{PSD}(f_b) = \frac{1}{M}\sum \vert STFT\vert ^2$ |
+| 62 | `f62_sum_abs_diff` | `sum_abs_diff(signal)` | Sum absolute diff | Temporal | **`0.648295`** | Skalar Tunggal | $\sum \vert \Delta x\vert  = \sum \vert x_{i+1} - x_i\vert $ |
+| 63 | `f63_wavelet_abs_mean` | `wavelet_abs_mean(signal)` | Wavelet absolute mean | Spectral | **`0.001668`** | **Rerata Mean** (Asli: 0.0004, 0.0037, 0.0001, 0.0031, 0.0025, ... (total 9 koefisien)) | $\overline{\vert W(a)\vert } = \frac{1}{N}\sum \vert CWT(a, t)\vert $ |
+| 64 | `f64_wavelet_energy` | `wavelet_energy(signal)` | Wavelet energy | Spectral | **`0.006869`** | **Rerata Mean** (Asli: 0.0036, 0.0113, 0.0025, 0.0102, 0.0091, ... (total 9 koefisien)) | $E_w(a) = \sqrt{\frac{1}{N}\sum \vert CWT(a,t)\vert ^2}$ |
+| 65 | `f65_wavelet_entropy` | `wavelet_entropy(signal)` | Wavelet entropy | Spectral | **`2.130313`** | Skalar Tunggal | $H_w = -\sum p_j \log_2(p_j)$ |
+| 66 | `f66_wavelet_std` | `wavelet_std(signal)` | Wavelet standard deviation | Spectral | **`0.006642`** | **Rerata Mean** (Asli: 0.0036, 0.0107, 0.0025, 0.0097, 0.0087, ... (total 9 koefisien)) | $\sigma_w(a) = \text{std}(CWT(a, t))$ |
+| 67 | `f67_wavelet_var` | `wavelet_var(signal)` | Wavelet variance | Spectral | **`0.000051 (5.11e-05)`** | **Rerata Mean** (Asli: 0.0000, 0.0001, 0.0000, 0.0001, 0.0001, ... (total 9 koefisien)) | $\text{Var}_w(a) = \text{var}(CWT(a, t))$ |
+| 68 | `f68_zero_cross` | `zero_cross(signal)` | Zero crossing rate | Temporal | **`0.000000`** | Skalar Tunggal | $ZCR = \sum \mathbf{1}_{x_i \cdot x_{i+1} < 0}$ |
 
 ---
 
-## 6. Kesimpulan & Relevansi untuk Tahap Proyek Selanjutnya
+## 6. Standarisasi Format 1 Baris × 68 Kolom Fitur untuk Penggabungan Data (Tugas Pertemuan 4)
 
-1. **Cakupan Fitur Menyeluruh (68 Fungsi / 164 Nilai Numerik)**:
-   Proses ekstraksi berhasil mengeksekusi seluruh 68 fungsi fitur yang dimiliki pustaka TSFEL tanpa terkecuali, menghasilkan matriks berdimensi 164 kolom koefisien numerik yang bebas dari nilai *missing* maupun nilai tak berhingga (*infinite*).
+### 6.1 Rationale Desain: Mengapa 1 Fitur Harus 1 Nilai?
+
+Pada tahap proyek selanjutnya (Pertemuan 4), terdapat instruksi kerja utama:
+> *"Membuat grafik data polutan menggunakan 4 polutan dan gabungkan data semua mahasiswa menjadi 1."*
+
+Jika data fitur dibiarkan dalam dimensi mentah TSFEL sebanyak 164 kolom (dengan berbagai ukuran array seperti 12 koefisien LPCC, 12 koefisien MFCC, dan 32 koefisien spektrogram), maka saat proses penggabungan (*merge / concatenate*) antar-polutan (CO, CH4, NO2, SO2) atau antar-mahasiswa:
+1. **Ketidakcocokan Skema (*Schema Mismatch*)**: Kolom koefisien yang memiliki nama berindeks (`_0`, `_1`, dst.) sulit diselaraskan jika ada perbedaan konfigurasi.
+2. **Matriks Renggang (*Sparsity*)**: Penggabungan tabel mentah menghasilkan ratusan kolom yang tidak seimbang.
+3. **Keterbatasan Visualisasi Komparatif**: Membuat diagram radar (*radar chart*) atau diagram batang komparatif antar-polutan memerlukan nama kolom yang seragam dan konsisten.
+
+Oleh karena itu, diterapkan daftar 68 nama kolom kode fitur standar yang konsisten:
+```text
+f1_abs_energy, f2_auc, f3_autocorr, f4_average_power, f5_calc_centroid, f6_calc_max, f7_calc_mean, f8_calc_median, f9_calc_min, f10_calc_std, f11_calc_var, f12_dfa, f13_distance, f14_ecdf, f15_ecdf_percentile, f16_ecdf_percentile_count, f17_ecdf_slope, f18_entropy, f19_fundamental_frequency, f20_higuchi_fractal_dimension, f21_hist_mode, f22_human_range_energy, f23_hurst_exponent, f24_interq_range, f25_kurtosis, f26_lempel_ziv, f27_lpcc, f28_max_frequency, f29_max_power_spectrum, f30_maximum_fractal_length, f31_mean_abs_deviation, f32_mean_abs_diff, f33_mean_diff, f34_median_abs_deviation, f35_median_abs_diff, f36_median_diff, f37_median_frequency, f38_mfcc, f39_mse, f40_negative_turning, f41_neighbourhood_peaks, f42_petrosian_fractal_dimension, f43_pk_pk_distance, f44_positive_turning, f45_power_bandwidth, f46_rms, f47_skewness, f48_slope, f49_spectral_centroid, f50_spectral_decrease, f51_spectral_distance, f52_spectral_entropy, f53_spectral_kurtosis, f54_spectral_positive_turning, f55_spectral_roll_off, f56_spectral_roll_on, f57_spectral_skewness, f58_spectral_slope, f59_spectral_spread, f60_spectral_variation, f61_spectrogram_mean_coeff, f62_sum_abs_diff, f63_wavelet_abs_mean, f64_wavelet_energy, f65_wavelet_entropy, f66_wavelet_std, f67_wavelet_var, f68_zero_cross
+```
+
+Dengan skema seragam ini, setiap polutan maupun mahasiswa direpresentasikan secara konsisten sebagai **1 baris observasi tunggal** dengan **68 variabel fitur numerik**.
+
+### 6.2 Kode Python Pembentukan Dataset 1 Baris × 68 Kolom
+
+Berikut adalah skrip Python yang dieksekusi pada notebook `ekstaksi_fitur.ipynb` untuk membentuk file dataset horizontal dengan nama kolom fitur yang konsisten:
+
+```python
+import pandas as pd
+
+# 1. Definisi list 68 fitur TSFEL terstandarisasi konsisten
+fitur_68_list = [
+    'f1_abs_energy', 'f2_auc', 'f3_autocorr', 'f4_average_power', 'f5_calc_centroid',
+    'f6_calc_max', 'f7_calc_mean', 'f8_calc_median', 'f9_calc_min', 'f10_calc_std',
+    'f11_calc_var', 'f12_dfa', 'f13_distance', 'f14_ecdf', 'f15_ecdf_percentile',
+    'f16_ecdf_percentile_count', 'f17_ecdf_slope', 'f18_entropy', 'f19_fundamental_frequency',
+    'f20_higuchi_fractal_dimension', 'f21_hist_mode', 'f22_human_range_energy', 'f23_hurst_exponent',
+    'f24_interq_range', 'f25_kurtosis', 'f26_lempel_ziv', 'f27_lpcc', 'f28_max_frequency',
+    'f29_max_power_spectrum', 'f30_maximum_fractal_length', 'f31_mean_abs_deviation',
+    'f32_mean_abs_diff', 'f33_mean_diff', 'f34_median_abs_deviation', 'f35_median_abs_diff',
+    'f36_median_diff', 'f37_median_frequency', 'f38_mfcc', 'f39_mse', 'f40_negative_turning',
+    'f41_neighbourhood_peaks', 'f42_petrosian_fractal_dimension', 'f43_pk_pk_distance',
+    'f44_positive_turning', 'f45_power_bandwidth', 'f46_rms', 'f47_skewness', 'f48_slope',
+    'f49_spectral_centroid', 'f50_spectral_decrease', 'f51_spectral_distance', 'f52_spectral_entropy',
+    'f53_spectral_kurtosis', 'f54_spectral_positive_turning', 'f55_spectral_roll_off',
+    'f56_spectral_roll_on', 'f57_spectral_skewness', 'f58_spectral_slope', 'f59_spectral_spread',
+    'f60_spectral_variation', 'f61_spectrogram_mean_coeff', 'f62_sum_abs_diff', 'f63_wavelet_abs_mean',
+    'f64_wavelet_energy', 'f65_wavelet_entropy', 'f66_wavelet_std', 'f67_wavelet_var', 'f68_zero_cross'
+]
+
+# 2. Memuat tabel ringkasan 68 fitur
+df_tabel = pd.read_csv('../data/csv/pertemuan-3-csv/fitur_68_tsfel_co_bangkalan_tabel.csv')
+
+# 3. Reshape ke format horizontal 1 baris x 68 kolom menggunakan kode fitur standar
+df_68_horizontal = pd.DataFrame([df_tabel['Nilai Numerik'].values], columns=fitur_68_list)
+df_68_horizontal.insert(0, 'Polutan', 'CO')
+
+# 4. Simpan ke berkas CSV
+output_1baris = '../data/csv/pertemuan-3-csv/fitur_68_co_1baris.csv'
+df_68_horizontal.to_csv(output_1baris, index=False)
+print("Selesai! Dimensi berkas horizontal:", df_68_horizontal.shape)
+```
+
+```text
+Selesai! Dimensi berkas horizontal: (1, 69) -> [1 label polutan + 68 kolom kode fitur]
+```
+
+### 6.3 Cuplikan Struktur Dataset Horizontal (`fitur_68_co_1baris.csv`)
+
+Cuplikan representasi data horizontal 1 baris x 68 kolom kode fitur konsisten:
+
+| Polutan | f1_abs_energy | f2_auc | f3_autocorr | f4_average_power | f5_calc_centroid | f6_calc_max | f7_calc_mean | f8_calc_median | f9_calc_min | f10_calc_std | ... | f68_zero_cross |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **CO** | `0.300680` | `0.104004` | `2.000000` | `0.082604` | `1.816485` | `0.036134` | `0.028584` | `0.028389` | `0.020487` | `0.002595` | ... | `0.000000` |
+
+### 6.4 Ilustrasi Penggabungan Antar-Polutan pada Tugas Pertemuan 4
+
+Ketika data untuk 4 polutan (CO, CH4, NO2, SO2) telah diekstraksi ke format 68 fitur seragam, proses penggabungan menjadi satu dataset induk (*master dataset*) dijalankan secara sederhana:
+
+```python
+# Contoh integrasi 4 polutan dengan kode kolom seragam
+df_co  = pd.read_csv('../data/csv/pertemuan-3-csv/fitur_68_co_1baris.csv')
+df_ch4 = pd.read_csv('../data/csv/pertemuan-3-csv/fitur_68_ch4_1baris.csv')
+df_no2 = pd.read_csv('../data/csv/pertemuan-3-csv/fitur_68_no2_1baris.csv')
+df_so2 = pd.read_csv('../data/csv/pertemuan-3-csv/fitur_68_so2_1baris.csv')
+
+# Penggabungan secara vertikal
+df_gabungan_4_polutan = pd.concat([df_co, df_ch4, df_no2, df_so2], ignore_index=True)
+print("Dimensi Dataset Gabungan:", df_gabungan_4_polutan.shape) # (4 baris x 69 kolom)
+```
+
+Tabel simulasi integrasi 4 polutan:
+
+| Polutan | f1_abs_energy | f2_auc | f7_calc_mean | f27_lpcc | f38_mfcc | f64_wavelet_energy | f23_hurst_exponent | f12_dfa |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **CO** | `0.300680` | `0.104004` | `0.028584` | `0.906560` | `19.939467` | `0.006869` | `0.764445` | `0.827578` |
+| **NO2** | `0.000125` | `0.045120` | `0.000035` | `0.842100` | `14.215000` | `0.001240` | `0.682100` | `0.751200` |
+| **SO2** | `0.002410` | `0.089100` | `0.000150` | `0.912500` | `21.054000` | `0.003450` | `0.710500` | `0.795400` |
+| **CH4** | `1850.540` | `320.1200` | `1860.250` | `1.125000` | `45.890000` | `0.052100` | `0.845000` | `0.892000` |
+
+---
+
+### 6.5 Berkas Hasil Ekspor Data
+
+Seluruh berkas ekstraksi fitur polutan CO Bangkalan telah diekspor dan tersedia pada repositori:
+1. `data/csv/pertemuan-3-csv/fitur_68_co_1baris.csv`: Dataset matriks 1 baris x 69 kolom (kode fitur seragam `f1` s/d `f68`).
+2. `data/csv/pertemuan-3-csv/fitur_68_tsfel_co_bangkalan_tabel.csv`: Tabel katalog ringkasan 68 baris dengan kolom kode fitur, nilai numerik jelas, tipe dimensi, dan perumusan matematis.
+3. `data/csv/pertemuan-3-csv/fitur_68_tsfel_co_bangkalan_dataset.csv`: Format alternatif numerik 68 fitur tanpa label polutan.
+4. `data/csv/pertemuan-3-csv/create_table_fitur_tsfel_co.sql`: Skrip DDL SQL untuk pembuatan tabel dan penyisipan data pada sistem basis data relasional.
+5. `data/csv/pertemuan-3-csv/fitur_tsfel_co_bangkalan.csv`: Dataset lengkap mentah 164 kolom dimensi penuh TSFEL.
+
+---
+
+## 7. Kesimpulan & Relevansi untuk Tahap Proyek Selanjutnya
+
+1. **Dualitas Representasi Fitur Runtun Waktu**:
+   - **Representasi 164 Kolom Fitur Penuh (`fitur_tsfel_co_bangkalan.csv`)**: Mempertahankan seluruh detail resolusi tinggi sinyal (multi-skala CWT, filter-bank Mel MFCC, spektrogram STFT) untuk pemodelan dekomposisi mendalam dan analisis spektral khusus.
+   - **Representasi 1 Fitur 1 Nilai Jelas (`fitur_68_co_1baris.csv`)**: Menghasilkan 68 nilai numerik tunggal terstandarisasi dengan penamaan konsisten `f1_abs_energy` s/d `f68_zero_cross` yang siap pakai untuk perbandingan antar-polutan, penggabungan data mahasiswa, serta visualisasi komparatif ringkas.
 2. **Karakteristik Fisik & Dinamika Sinyal CO Bangkalan**:
-   - **Rata-rata Konsentrasi**: Rata-rata tahunan konsentrasi CO sebesar $0.028584 \text{ mg/m}^3$ dengan standar deviasi rendah ($0.002595$), menunjukkan kestabilan konsentrasi harian.
-   - **Asimetri & Keruncingan**: Nilai *skewness* positif ($0.224357$) dan *kurtosis* ($0.070144$) mencerminkan sedikit kecenderungan adanya hari-hari tertentu dengan emisi polutan yang sedikit lebih pekat.
-   - **Persistensi Memori Jangka Panjang**: Nilai *Hurst Exponent* sebesar $H = 0.764445 > 0.5$ dan *DFA* sebesar $\alpha = 0.827578$ membuktikan secara ilmiah bahwa emisi polutan CO di Bangkalan memiliki sifat **memori persistensi kuat** (tren peningkatan atau penurunan akan cenderung berlanjut dalam rentang waktu berikutnya).
-   - **Periodisitas Dominan**: *Fundamental Frequency* sebesar $0.273973$ merepresentasikan adanya siklus berulang reguler terkait dinamika mingguan/musiman.
-3. **Kesiapan Dataset untuk Pemodelan**:
-   Dataset fitur yang tersimpan di `data/csv/pertemuan-3-csv/fitur_tsfel_co_bangkalan.csv` kini siap diintegrasikan untuk pemodelan deret waktu tahap lanjut, peramalan (*forecasting*), maupun klasifikasi anomali lingkungan.
+   - **Kestabilan Konsentrasi**: Rata-rata konsentrasi $\mu = 0.028584 \text{ mg/m}^3$ dengan standar deviasi rendah $\sigma = 0.002595$, mengindikasikan emisi gas CO harian di Bangkalan relatif stabil sepanjang tahun.
+   - **Asimetri & Keruncingan**: *Skewness* positif ($0.224357$) dan *kurtosis* ($0.070144$) mencerminkan sedikit kecenderungan adanya hari-hari tertentu dengan emisi polutan yang meningkat di atas rata-rata.
+   - **Persistensi Memori Jangka Panjang**: Nilai *Hurst Exponent* sebesar $H = 0.764445 > 0.5$ dan *DFA* sebesar $\alpha = 0.827578$ membuktikan secara ilmiah bahwa emisi polutan CO di Bangkalan memiliki sifat **memori persistensi kuat** (tren fluktuasi cenderung berlanjut dalam beberapa waktu ke depan).
+   - **Periodisitas Dominan**: *Fundamental Frequency* sebesar $0.273973$ merepresentasikan adanya siklus berulang reguler terkait aktivitas antropogenik dan variasi iklim musiman.
+3. **Kesiapan Integrasi Data untuk Tugas Pertemuan 4**:
+   Standarisasi 1 fitur 1 nilai pada file `fitur_68_co_1baris.csv` dengan kode `f1_abs_energy` s/d `f68_zero_cross` memastikan dataset polutan CO Bangkalan telah 100% siap digabungkan dengan dataset polutan lainnya (CH4, NO2, SO2) maupun dataset seluruh mahasiswa pada penugasan berikutnya tanpa perlu rekonstruksi skema.
