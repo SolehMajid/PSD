@@ -350,12 +350,12 @@ Dengan selesainya alur pengolahan pada Pertemuan 4 ini:
 
 ## 7. Analisis Lanjutan: Melakukan Cluster Menggunakan K-Means Menggunakan KNIME
 
-Sebagai tindak lanjut dari integrasi matriks fitur runtun waktu 4 polutan yang dikompilasi dari 16 mahasiswa / wilayah pengamatan, dilakukan pemodelan klaster menggunakan **KNIME Analytics Platform** dengan algoritma **K-Means Clustering**.
+Sebagai tindak lanjut dari integrasi matriks fitur runtun waktu 4 polutan yang dikompilasi dari 18 mahasiswa / wilayah pengamatan, dilakukan pemodelan klaster menggunakan **KNIME Analytics Platform** dengan algoritma **K-Means Clustering**.
 
 Pada pengujian ini, dianalisis dua pendekatan pemodelan:
-1. **Menggunakan PCA dengan 16 Dimensi**: Mereduksi 272 fitur awal menjadi 16 komponen utama sebelum K-Means.
+1. **Menggunakan PCA dengan 18 Dimensi**: Mereduksi 272 fitur awal menjadi 18 komponen utama sebelum K-Means.
 2. **Tanpa PCA (272 Fitur Penuh)**: Memasukkan seluruh 272 fitur TSFEL secara langsung ke K-Means tanpa reduksi dimensi.
 
-Dokumentasi lengkap, arsitektur workflow KNIME, tabel hasil pengelompokan 16 data, analisis nilai centroid klaster, serta evaluasi komparatif disajikan pada halaman berikut:
+Dokumentasi lengkap, arsitektur workflow KNIME, tabel hasil pengelompokan 18 data, analisis nilai centroid klaster, serta evaluasi komparatif disajikan pada halaman berikut:
 
 👉 **[Melakukan Cluster menggunakan K-means menggunakan Knime](Melakukan%20Cluster%20menggunakan%20K-means%20menggunakan%20Knime.md)**
