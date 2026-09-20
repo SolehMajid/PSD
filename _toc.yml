@@ -11,5 +11,5 @@ chapters:
     sections:
       - file: pertemuan-3/Melakukan Extraksi Fitur Tsfel.md
   - file: pertemuan-4/pertemuan-4
-  
-      
+    sections:
+      - file: pertemuan-4/Melakukan Cluster menggunakan K-means menggunakan Knime.md

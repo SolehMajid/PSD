@@ -345,3 +345,17 @@ Tabel berikut menyajikan seluruh 68 fitur runtun waktu terstandarisasi (`f1` s.d
 Dengan selesainya alur pengolahan pada Pertemuan 4 ini:
 1. **Dataset Bersih Terpadu**: Berkas `polutan_4_final_clean.csv` telah terbebas $100\%$ dari outlier dan missing value untuk 365 hari pengamatan.
 2. **Matriks Fitur Terstandarisasi**: Berkas `fitur_68_4_polutan.csv` menyediakan representasi numerik ringkas (4 baris × 69 kolom) yang siap diintegrasikan dengan dataset mahasiswa lain atau digunakan langsung sebagai variabel input (*feature space*) untuk pemodelan *Machine Learning* dan *Clustering* kualitas udara.
+
+---
+
+## 7. Analisis Lanjutan: Melakukan Cluster Menggunakan K-Means Menggunakan KNIME
+
+Sebagai tindak lanjut dari integrasi matriks fitur runtun waktu 4 polutan yang dikompilasi dari 16 mahasiswa / wilayah pengamatan, dilakukan pemodelan klaster menggunakan **KNIME Analytics Platform** dengan algoritma **K-Means Clustering**.
+
+Pada pengujian ini, dianalisis dua pendekatan pemodelan:
+1. **Menggunakan PCA dengan 16 Dimensi**: Mereduksi 272 fitur awal menjadi 16 komponen utama sebelum K-Means.
+2. **Tanpa PCA (272 Fitur Penuh)**: Memasukkan seluruh 272 fitur TSFEL secara langsung ke K-Means tanpa reduksi dimensi.
+
+Dokumentasi lengkap, arsitektur workflow KNIME, tabel hasil pengelompokan 16 data, analisis nilai centroid klaster, serta evaluasi komparatif disajikan pada halaman berikut:
+
+👉 **[Melakukan Cluster menggunakan K-means menggunakan Knime](Melakukan%20Cluster%20menggunakan%20K-means%20menggunakan%20Knime.md)**
