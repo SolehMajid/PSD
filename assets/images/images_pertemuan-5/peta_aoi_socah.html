@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_8cdc1df9381c3c23f07be664b545243e {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_8cdc1df9381c3c23f07be664b545243e" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_8cdc1df9381c3c23f07be664b545243e = L.map(
+                "map_8cdc1df9381c3c23f07be664b545243e",
+                {
+                    center: [-7.08658812, 112.7237405],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_3251ce372cef1200e0f4777d9130bcb6 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_3251ce372cef1200e0f4777d9130bcb6.addTo(map_8cdc1df9381c3c23f07be664b545243e);
+        
+    
+            var rectangle_58002395ba1eb481f40119878b02302e = L.rectangle(
+                [[-7.1242393, 112.6736254], [-7.0522304, 112.7899726]],
+                {"bubblingMouseEvents": true, "color": "#2c3e50", "dashArray": "6, 6", "dashOffset": null, "fill": false, "fillColor": "#2c3e50", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(map_8cdc1df9381c3c23f07be664b545243e);
+        
+    
+        var popup_e9b4fa54a1e5f0d8fa4a57222423dd91 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0d1540d35a4d757ed4e414dce5d85bf4 = $(`<div id="html_0d1540d35a4d757ed4e414dce5d85bf4" style="width: 100.0%; height: 100.0%;">Bounding Box (Spatial Extent openEO)</div>`)[0];
+                popup_e9b4fa54a1e5f0d8fa4a57222423dd91.setContent(html_0d1540d35a4d757ed4e414dce5d85bf4);
+            
+        
+
+        rectangle_58002395ba1eb481f40119878b02302e.bindPopup(popup_e9b4fa54a1e5f0d8fa4a57222423dd91)
+        ;
+
+        
+    
+    
+        function geo_json_0ac10898c38d1da9f202fb1f6a4840ab_styler(feature) {
+            switch(feature.properties.name) {
+                default:
+                    return {"color": "#e74c3c", "fillColor": "#3498db", "fillOpacity": 0.45, "weight": 3};
+            }
+        }
+
+        function geo_json_0ac10898c38d1da9f202fb1f6a4840ab_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_0ac10898c38d1da9f202fb1f6a4840ab = L.geoJson(null, {
+                onEachFeature: geo_json_0ac10898c38d1da9f202fb1f6a4840ab_onEachFeature,
+            
+                style: geo_json_0ac10898c38d1da9f202fb1f6a4840ab_styler,
+            ...{
+}
+        });
+
+        function geo_json_0ac10898c38d1da9f202fb1f6a4840ab_add (data) {
+            geo_json_0ac10898c38d1da9f202fb1f6a4840ab
+                .addData(data);
+        }
+            geo_json_0ac10898c38d1da9f202fb1f6a4840ab_add({"features": [{"geometry": {"coordinates": [[[112.6736254, -7.063601], [112.6736254, -7.075242], [112.6865832, -7.0936504], [112.7010414, -7.0960868], [112.7059517, -7.1058321], [112.7018597, -7.1196376], [112.7283209, -7.1242393], [112.7446886, -7.1155772], [112.7479622, -7.1055614], [112.7738777, -7.1131409], [112.7899726, -7.1109754], [112.7866991, -7.0841756], [112.7648755, -7.0871534], [112.7689674, -7.077137], [112.7528725, -7.0749713], [112.744143, -7.0592693], [112.7062245, -7.0525011], [112.6759442, -7.0522304], [112.6739496, -7.0571792], [112.6736254, -7.063601]]], "type": "Polygon"}, "properties": {"name": "AOI Kecamatan Socah, Bangkalan"}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            geo_json_0ac10898c38d1da9f202fb1f6a4840ab.bindTooltip(
+                `<div>
+                     <b>AOI: Kecamatan Socah, Bangkalan</b><br>20 Titik Koordinat Poligon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            geo_json_0ac10898c38d1da9f202fb1f6a4840ab.addTo(map_8cdc1df9381c3c23f07be664b545243e);
+        
+    
+            var marker_91a3c39c2b45f5492fa6cdb03386422a = L.marker(
+                [-7.08658812, 112.7237405],
+                {
+}
+            ).addTo(map_8cdc1df9381c3c23f07be664b545243e);
+        
+    
+            var icon_a13fdd48c8842f25a98c718b7d437075 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f5eeb96b70e0eb45caa67ce333685c6a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5c4d0608cc40cdd4bd7cfb5042a050e7 = $(`<div id="html_5c4d0608cc40cdd4bd7cfb5042a050e7" style="width: 100.0%; height: 100.0%;"><b>Pusat Area of Interest (AOI)</b><br>Lat: -7.08659<br>Lon: 112.72374</div>`)[0];
+                popup_f5eeb96b70e0eb45caa67ce333685c6a.setContent(html_5c4d0608cc40cdd4bd7cfb5042a050e7);
+            
+        
+
+        marker_91a3c39c2b45f5492fa6cdb03386422a.bindPopup(popup_f5eeb96b70e0eb45caa67ce333685c6a)
+        ;
+
+        
+    
+    
+            marker_91a3c39c2b45f5492fa6cdb03386422a.bindTooltip(
+                `<div>
+                     Pusat AOI Kecamatan Socah
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_91a3c39c2b45f5492fa6cdb03386422a.setIcon(icon_a13fdd48c8842f25a98c718b7d437075);
+            
+    
+            map_8cdc1df9381c3c23f07be664b545243e.fitBounds(
+                [[-7.1362393, 112.6586254], [-7.0402304, 112.8049726]],
+                {}
+            );
+        
+    
+            var layer_control_3fbcdefda69c92dd730e670e1ea1115e_layers = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_3251ce372cef1200e0f4777d9130bcb6,
+                },
+                overlays :  {
+                    "Batas AOI Socah" : geo_json_0ac10898c38d1da9f202fb1f6a4840ab,
+                },
+            };
+            let layer_control_3fbcdefda69c92dd730e670e1ea1115e = L.control.layers(
+                layer_control_3fbcdefda69c92dd730e670e1ea1115e_layers.base_layers,
+                layer_control_3fbcdefda69c92dd730e670e1ea1115e_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": true,
+  "autoZIndex": true,
+}
+            ).addTo(map_8cdc1df9381c3c23f07be664b545243e);
+
+        
+</script>
+</html>
