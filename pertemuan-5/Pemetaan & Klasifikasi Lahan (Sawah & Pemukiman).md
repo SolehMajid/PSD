@@ -12,9 +12,9 @@ kernelspec:
   name: python3
 ---
 
-# Pemetaan & Klasifikasi Lahan (Sawah & Pemukiman)
+# Pemetaan & Klasifikasi Lahan (Sawah & Bukan Sawah)
 
-Modul ini membahas langkah sederhana dalam memetakan dan mengklasifikasikan lahan **Sawah** dan **Pemukiman (Bukan Sawah)** di **Kecamatan Socah, Kabupaten Bangkalan** menggunakan data koordinat GeoJSON dan citra satelit **Sentinel-2A**.
+Modul ini membahas proses pemetaan dan klasifikasi lahan antara **Sawah** dan **Bukan Sawah** di **Kecamatan Socah, Kabupaten Bangkalan** menggunakan data koordinat GeoJSON dan citra satelit **Sentinel-2A**.
 
 Seluruh kode praktikum dapat dijalankan pada notebook: [`ambil_data.ipynb`](ambil_data.ipynb).
 
@@ -22,17 +22,20 @@ Seluruh kode praktikum dapat dijalankan pada notebook: [`ambil_data.ipynb`](ambi
 
 ## 1. Data Koordinat (GeoJSON)
 
-Data titik lokasi lahan diambil dari berkas [`50,50,1.geojson`](50,50,1.geojson) yang berisi 3 komponen:
-1. **1 Batas Wilayah (Socah):** Area poligon batas Kecamatan Socah.
-2. **50 Titik Sawah:** Lokasi lahan pertanian sawah aktif.
-3. **50 Titik Bukan Sawah (Pemukiman):** Lokasi kawasan perumahan dan bangunan warga.
+Data titik lokasi lahan diambil dari berkas [`50,50,1.geojson`](50,50,1.geojson) yang memuat:
+* **1 Batas Wilayah:** Poligon batas administrasi Kecamatan Socah.
+* **50 Titik Sawah:** Sampel area persawahan.
+* **50 Titik Bukan Sawah:** Sampel area selain sawah (mencakup pemukiman, tanah terbuka, vegetasi non-padi, jalan, dan fasilitas umum).
 
-### Peta Interaktif (Folium) Wilayah Socah, Sawah, dan Pemukiman
+> **Catatan Penting:** 
+> Kategori **Bukan Sawah** bersifat heterogen (tidak hanya pemukiman). Selain itu, **sawah belum tentu selalu berwarna hijau**, karena kondisi sawah bergantung pada fase siklus tanam padi (fase pengolahan tanah/tergenang air, fase hijau vegetatif, fase pematangan/menguning, hingga fase pasca-panen/tanah bera).
 
-Di bawah ini adalah peta interaktif menggunakan pustaka **`folium`** yang menampilkan:
+### Peta Interaktif (Folium) Wilayah Socah, Sawah, dan Bukan Sawah
+
+Berikut visualisasi peta interaktif menggunakan **`folium`**:
 * **Garis Biru:** Batas wilayah pengamatan Kecamatan Socah.
-* **Titik Hijau:** 50 lokasi lahan sawah.
-* **Titik Merah:** 50 lokasi pemukiman (bukan sawah).
+* **Titik Hijau:** 50 titik lokasi lahan sawah.
+* **Titik Merah:** 50 titik lokasi bukan sawah.
 
 ```{code-cell}
 :tags: [hide-input]
@@ -44,28 +47,27 @@ import geopandas as gpd
 geojson_path = "pertemuan-5/50,50,1.geojson" if os.path.exists("pertemuan-5/50,50,1.geojson") else "50,50,1.geojson"
 gdf = gpd.read_file(geojson_path)
 
-# Pisahkan layer batas wilayah dan sampel
 aoi = gdf[gdf["Sawah"] == "socah"]
 sawah = gdf[gdf["Sawah"] == "sawah"]
 bukan = gdf[gdf["Sawah"] == "bukan"]
 
-# Ambil titik tengah wilayah Socah
+# Titik tengah Kecamatan Socah
 center_point = aoi.geometry.iloc[0].centroid
 m = folium.Map(location=[center_point.y, center_point.x], zoom_start=13, tiles="OpenStreetMap")
 
-# 1. Tambahkan Batas Wilayah Kecamatan Socah
+# 1. Batas Wilayah Socah (Garis Biru)
 folium.GeoJson(
     aoi,
-    name="Batas Daerah (Socah)",
+    name="Batas Wilayah Socah",
     style_function=lambda x: {
         "color": "#0044ff",
         "weight": 2.5,
         "fillColor": "#3388ff",
-        "fillOpacity": 0.1
+        "fillOpacity": 0.08
     }
 ).add_to(m)
 
-# 2. Tambahkan 50 Titik Sawah (Warna Hijau)
+# 2. 50 Titik Sawah (Warna Hijau)
 g_sawah = folium.FeatureGroup(name="50 Titik Sawah (Hijau)")
 for _, row in sawah.iterrows():
     pt = row.geometry.centroid
@@ -80,8 +82,8 @@ for _, row in sawah.iterrows():
     ).add_to(g_sawah)
 g_sawah.add_to(m)
 
-# 3. Tambahkan 50 Titik Bukan Sawah / Pemukiman (Warna Merah)
-g_bukan = folium.FeatureGroup(name="50 Titik Pemukiman (Merah)")
+# 3. 50 Titik Bukan Sawah (Warna Merah)
+g_bukan = folium.FeatureGroup(name="50 Titik Bukan Sawah (Merah)")
 for _, row in bukan.iterrows():
     pt = row.geometry.centroid
     folium.CircleMarker(
@@ -95,10 +97,7 @@ for _, row in bukan.iterrows():
     ).add_to(g_bukan)
 g_bukan.add_to(m)
 
-# Tambahkan kontrol layer
 folium.LayerControl(collapsed=False).add_to(m)
-
-# Tampilkan peta
 m
 ```
 
@@ -106,43 +105,79 @@ m
 
 ## 2. Pengunduhan Citra Satelit Sentinel-2A ke File TIF
 
-Citra satelit diunduh langsung dari platform resmi **Copernicus Data Space Ecosystem (CDSE)** menggunakan **openEO API**:
-* **Koleksi:** `SENTINEL2_L2A` (Level-2A, sudah terkoreksi atmosfer).
-* **Band yang Diambil (Resolusi 10 Meter):**
-  * `B02` (Blue)
-  * `B03` (Green)
-  * `B04` (Red)
-  * `B08` (NIR / Near-Infrared)
-* **Batas Wilayah (*Extent*):** Berdasarkan koordinat batas Kecamatan Socah.
-* **Metode Komposit:** Menggunakan nilai **median** pada periode musim kemarau (Agustus) agar citra bersih dan bebas awan.
-* **Hasil Pengunduhan:** Disimpan dalam format GeoTIFF ke file: `../data/tif/pertemuan-5-tif/sentinel2_socah.tif`.
+Citra satelit optik diunduh dari platform **Copernicus Data Space Ecosystem (CDSE)** menggunakan **openEO API**:
+* **Koleksi:** `SENTINEL2_L2A` (Surface Reflectance resolusi 10 meter).
+* **Band Spektral:** Blue (`B02`), Green (`B03`), Red (`B04`), dan Near-Infrared / NIR (`B08`).
+* **Batas Wilayah (*Extent*):** Bounding box koordinat Kecamatan Socah.
+* **Komposit Temporal:** Median pada periode bulan Agustus agar citra jernih dan bebas tutupan awan (*cloud-free*).
+* **Format Output:** Disimpan sebagai GeoTIFF di: `../data/tif/pertemuan-5-tif/sentinel2_socah.tif`.
 
 ---
 
-## 3. Ekstraksi Fitur Spektral & Indeks Vegetasi (NDVI)
+## 3. Citra RGB & Peta Indeks Vegetasi (NDVI)
 
-Untuk membedakan tanaman padi di sawah dengan bangunan pemukiman, dihitung nilai **NDVI (*Normalized Difference Vegetation Index*)**:
+Kombinasi multi-band digunakan untuk menghitung indeks vegetasi **NDVI**:
 
 $$\text{NDVI} = \frac{\text{B08 (NIR)} - \text{B04 (Red)}}{\text{B08 (NIR)} + \text{B04 (Red)}}$$
 
-* **Sawah:** Tanaman padi yang hijau dan sehat menyerap cahaya merah (`B04`) dan memantulkan inframerah dekat (`B08`) secara kuat, sehingga menghasilkan **NDVI tinggi ($\approx 0.48$)**.
-* **Pemukiman:** Atap rumah, semen, dan tanah kering memiliki pantulan merah yang lebih tinggi dan inframerah yang lebih rendah, sehingga menghasilkan **NDVI lebih rendah ($\approx 0.31$)**.
+```{figure} ../assets/images/images_pertemuan-5/5.citra_rgb_dan_ndvi_socah.png
+:width: 95%
+:align: center
 
-Nilai pantulan spektral 100 sampel ini disimpan ke berkas CSV:
-`../data/csv/pertemuan-5-csv/dataset_sampel_sawah_pemukiman.csv`.
+Perbandingan Citra Sentinel-2A True Color (RGB) dan Peta Sebaran Nilai NDVI Kecamatan Socah.
+```
+
+* **Nilai NDVI Tinggi ($\approx 0.48 - 0.70$):** Menunjukkan area sawah yang sedang berada pada fase pertumbuhan vegetatif aktif (banyak klorofil hijau).
+* **Nilai NDVI Sedang / Rendah ($\approx 0.15 - 0.35$):** Menunjukkan area bukan sawah (pemukiman, tanah kering, jalan) ataupun sawah yang sedang dalam fase bera/panen.
+* Oleh karena itu, klasifikasi tidak hanya mengandalkan satu nilai NDVI saja, melainkan menggabungkan seluruh 4 band spektral (`B02`, `B03`, `B04`, `B08`) ke dalam model Machine Learning.
 
 ---
 
-## 4. Hasil Klasifikasi Lahan (Machine Learning)
+## 4. Evaluasi Klasifikasi Machine Learning (Sawah vs Bukan Sawah)
 
-Dengan membagi data menjadi 75% data latih dan 25% data uji, model **Random Forest Classifier** dilatih untuk menguji validasi pemisahan sawah dan pemukiman:
+Nilai spektral dari 100 titik sampel diekstrak dan disimpan ke tabel: `../data/csv/pertemuan-5-csv/dataset_sampel_sawah_pemukiman.csv`.
 
-| Metrik Evaluasi | Pemukiman (Bukan Sawah) | Sawah | Rata-Rata |
-| :--- | :---: | :---: | :---: |
-| **Precision** | $0.83$ | $0.77$ | **$0.80$** |
-| **Recall** | $0.77$ | $0.83$ | **$0.80$** |
-| **F1-Score** | $0.80$ | $0.80$ | **$0.80$** |
-| **Akurasi Total** | - | - | **$80.0\%$** |
+Model **Random Forest** dilatih menggunakan 75% data latih dan diuji pada 25% data uji:
 
-**Kesimpulan:**
-Citra satelit Sentinel-2A dan indeks vegetasi NDVI terbukti mampu membedakan area persawahan dan pemukiman di Kecamatan Socah dengan akurasi yang baik dan teruji secara saintifik.
+```{figure} ../assets/images/images_pertemuan-5/6.evaluasi_klasifikasi_confusion_matrix.png
+:width: 90%
+:align: center
+
+Confusion Matrix Prediksi Model Random Forest dan Boxplot Nilai NDVI Sawah vs Bukan Sawah.
+```
+
+### Tabel Evaluasi Model:
+
+| Kelas Lahan | Precision | Recall | F1-Score | Akurasi Total |
+| :--- | :---: | :---: | :---: | :---: |
+| **Bukan Sawah** | $0.83$ | $0.77$ | $0.80$ | - |
+| **Sawah** | $0.77$ | $0.83$ | $0.80$ | - |
+| **Rata-Rata** | **$0.80$** | **$0.80$** | **$0.80$** | **$80.0\%$** |
+
+---
+
+## 5. Peta Hasil Klasifikasi & Estimasi Luas Lahan
+
+Model diterapkan ke seluruh piksel di dalam batas administrasi Kecamatan Socah:
+
+```{figure} ../assets/images/images_pertemuan-5/7.peta_hasil_klasifikasi_lahan_socah.png
+:width: 95%
+:align: center
+
+Peta Hasil Klasifikasi Tutupan Lahan Kecamatan Socah (Hijau = Sawah, Merah = Bukan Sawah) dan Diagram Proporsi Luas.
+```
+
+### Estimasi Luas Wilayah:
+* **Area Sawah (Hijau):** $\approx 2.193\text{ Hektar}$ ($34.6\%$).
+* **Area Bukan Sawah (Merah):** $\approx 4.152\text{ Hektar}$ ($65.4\%$).
+* **Total Luas Daratan Socah:** $\approx 6.345\text{ Hektar}$ ($\approx 63.45\text{ km}^2$).
+
+Raster hasil klasifikasi ini tersimpan dalam format GeoTIFF di:
+`../data/tif/pertemuan-5-tif/hasil_klasifikasi_lahan_socah.tif`.
+
+---
+
+## Kesimpulan
+1. **Data Sampel:** 50 titik sawah dan 50 titik bukan sawah berhasil dipetakan secara interaktif di wilayah Kecamatan Socah.
+2. **Karakteristik Lahan:** Kategori "Bukan Sawah" mencakup berbagai area non-persawahan, dan sawah memiliki fase spektral yang bervariasi sepanjang masa tanam (tidak selalu hijau).
+3. **Hasil Klasifikasi:** Kombinasi 4 band multispektral Sentinel-2A dan model Random Forest berhasil membedakan sawah dan bukan sawah dengan akurasi **80%**.
