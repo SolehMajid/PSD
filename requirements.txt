@@ -8,3 +8,10 @@ requests
 scikit-learn
 openpyxl
 tsfel
+seaborn
+openeo
+rasterio
+geopandas
+shapely
+xarray
+netCDF4

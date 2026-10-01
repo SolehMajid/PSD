@@ -14,3 +14,6 @@ chapters:
     sections:
       - file: pertemuan-4/Melakukan Cluster menggunakan K-means menggunakan Knime.md
   - file: pertemuan-5/Pertemuan 5
+    sections:
+      - file: pertemuan-5/Pemetaan & Klasifikasi Lahan (Sawah & Pemukiman).md
+      - file: pertemuan-5/ambil_data.ipynb
