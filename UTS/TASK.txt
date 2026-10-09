@@ -16,4 +16,5 @@ Note : Menggunakan leaflet ,apabila di centang akan muncul bagian sawah saja, ji
 # Membuat layer di geojson ( ngedigit) menyesuaikan dengan classnya
 
 #Di deploy di steamlit ( nanti aja ini kalo klasifikasinya bagus )
-Ambil-proses-klasifikasi-dapet informasi
+
+
