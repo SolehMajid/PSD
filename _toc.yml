@@ -16,4 +16,8 @@ chapters:
   - file: pertemuan-5/Pertemuan 5
     sections:
       - file: pertemuan-5/Pemetaan & Klasifikasi Lahan (Sawah & Pemukiman).md
+  - file: UTS/UTS
+    sections:
+      - file: UTS/Penjelasan
+      - file: UTS/ambil_data_jatim_60m
 

@@ -1,0 +1,19 @@
+#Pengganti uts, melakukan digit ulang. 
+Didasarkan model klasifkkasi ( boleh menggunakan apa saja  )  Daerah Jawa Timur 
+
+-Bagunan ( build up) udah
+-Lahan pertanian ( farm land) udah
+-Lautan, danau, perairan ( water body) udah
+-Hutan ( forest) udah
+-Hutan Mangrove udah
+Jumlah datanya : harus banyak. Menyesuaikan sampai model bagus
+
+
+# Tampilkan layer  klasifikasi diatas gambar satelit. yang biru biru digeojson (ngedigit) tumpuk di atas map satelit. sebelum dan sesudah klasifikasi ( bisa dilihat juga pas split data, test dll) 
+
+Note : Menggunakan leaflet ,apabila di centang akan muncul bagian sawah saja, jika yang di centang sawah ( di filter  ) 
+
+# Membuat layer di geojson ( ngedigit) menyesuaikan dengan classnya
+
+#Di deploy di steamlit ( nanti aja ini kalo klasifikasinya bagus )
+Ambil-proses-klasifikasi-dapet informasi
