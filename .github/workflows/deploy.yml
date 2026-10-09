@@ -35,6 +35,8 @@ jobs:
       - name: Build the book
         run: |
           jupyter-book build .
+          mkdir -p _build/html/UTS
+          cp UTS/*.html _build/html/UTS/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
