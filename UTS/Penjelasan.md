@@ -121,6 +121,39 @@ Untuk mempertajam pemisahan kelas, dihitung 4 indeks matematika:
 
 ---
 
+### 2.6 Analisis Kurva Tanda Tangan Spektral (Spectral Signatures)
+
+**Tanda Tangan Spektral (*Spectral Signature*)** adalah profil atau pola khas pantulan (*reflectance*) dan penyerapan (*absorption*) energi elektromagnetik suatu objek pada berbagai panjang gelombang sensor satelit. 
+
+Dari 270 sampel yang didigitasi di Jawa Timur, kurva rata-rata reflektansi spektral pada 6 band Sentinel-2A dihitung dan divisualisasikan sebagai berikut:
+
+```{figure} ../assets/images/images_uts/6.kurva_tanda_tangan_spektral.png
+:width: 95%
+:align: center
+
+Kurva Tanda Tangan Spektral (Spectral Signatures) 5 Kelas Tutupan Lahan Sentinel-2A Se-Jawa Timur.
+```
+
+#### Interpretasi Ilmiah Karakteristik Spektral per Kelas:
+1. **Perairan (*Water Body* - Garis Biru)**:
+   - **Karakteristik**: Memiliki pantulan yang rendah pada spektrum tampak (`B02, B03, B04`) dan **anjlok tajam mendekati nilai terendah pada spektrum inframerah** (`B08 NIR ~813`, `B8A ~825`, dan `B11 SWIR ~604`).
+   - **Alasan Fisik**: Molekul air murni maupun berpartikel menyerap hampir 100% radiasi inframerah dekat dan gelombang pendek. Karakteristik ini membuat kelas perairan paling mudah diisolasi oleh indeks `MNDWI`.
+
+2. **Hutan Biasa vs Hutan Mangrove (*Garis Hijau vs Ungu*)**:
+   - **Kemiripan di NIR (`B08 & B8A`)**: Keduanya menunjukkan lonjakan tajam (*vegetation red-edge peak*) di spektrum inframerah dekat (`B08 ~2500` dan `B8A ~2700`) karena tingginya kandungan klorofil serta pantulan dari struktur sel mesofil daun kanopi pohon yang rapat.
+   - **Pembeda Kunci di SWIR-1 (`B11`)**: Pada band `B11` (1610 nm), reflektansi Hutan Mangrove berada di **~1159**, sedangkan Hutan Biasa melonjak hingga **~2183** (hampir 2 kali lipat lebih tinggi).
+   - **Alasan Fisik**: Ekosistem mangrove tumbuh di habitat estuari dan pesisir dengan substrat lumpur basah berair pasang-surut. Kelembaban air yang sangat tinggi tersebut menyerap kuat radiasi SWIR, sehingga kurva mangrove turun drastis di `B11`. Perbedaan inilah yang dimanfaatkan oleh fitur `Ratio_B8A_B11`.
+
+3. **Bangunan / Area Terbangun (*Built-up* - Garis Merah)**:
+   - **Karakteristik**: Menunjukkan kurva yang **terus menanjak secara konsisten** dari spektrum tampak hingga puncaknya di inframerah gelombang pendek (`B11 ~2593`).
+   - **Alasan Fisik**: Material buatan manusia (atap seng/genteng, aspal jalan, beton perkotaan, semen) bersifat kering dan sangat kedap air, sehingga memantulkan radiasi SWIR paling tinggi dibandingkan seluruh tutupan lahan lainnya. Hal ini membuat nilai `NDBI` bangunan selalu bertanda positif (+0.117).
+
+4. **Lahan Pertanian (*Sawah* - Garis Oranye Putus-Putus)**:
+   - **Karakteristik**: Berada di posisi moderat di antara vegetasi rapat dan tanah terbuka. Reflektansi pada NIR (`B08 ~1721`) tidak setinggi hutan rimba, dan pada SWIR (`B11 ~1684`) berada di bawah bangunan.
+   - **Alasan Fisik**: Persawahan di Jawa Timur memiliki variabilitas temporal yang tinggi (fase tanam padi yang tergenang air, fase vegetatif hijau, hingga fase bera/panen tanah terbuka). Oleh karena itu, kurva spektralnya membentuk respon campuran yang khas.
+
+---
+
 ## 3. Visualisasi Citra Satelit: True Color vs False Color Spektral
 
 Berikut adalah komparasi visual citra Sentinel-2A full Jawa Timur sebelum dilakukan pemodelan machine learning:
