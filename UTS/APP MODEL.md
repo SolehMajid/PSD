@@ -6,9 +6,9 @@ Melalui antarmuka web ini, pengguna dapat melihat visualisasi sebaran lahan, men
 
 ---
 
-###  Akses Aplikasi Web
+### 🔗 Akses Aplikasi Web
 
 Aplikasi web dapat diakses secara langsung melalui tautan berikut:
 
-**[Buka Aplikasi Streamlit Tutupan Lahan Jawa Timur](https://psd-tutupan-lahan-jatim.streamlit.app/)**  
+👉 **[Buka Aplikasi Streamlit Tutupan Lahan Jawa Timur](https://psd-tutupan-lahan-jatim.streamlit.app/)**  
 URL: `https://psd-tutupan-lahan-jatim.streamlit.app/`
