@@ -1,0 +1,86 @@
+{
+  "centroid": {
+    "Perairan (Water Body)": {
+      "display": "Air",
+      "count": 2505594,
+      "pct": 42.64,
+      "ha": 3608055.4,
+      "km2": 36080.55,
+      "color_hex": "#0984e3"
+    },
+    "Hutan Mangrove": {
+      "display": "Hutan Mangrove",
+      "count": 471416,
+      "pct": 8.02,
+      "ha": 678839.0,
+      "km2": 6788.39,
+      "color_hex": "#8e44ad"
+    },
+    "Hutan Biasa": {
+      "display": "Hutan Non-Mangrove",
+      "count": 1871609,
+      "pct": 31.85,
+      "ha": 2695117.0,
+      "km2": 26951.17,
+      "color_hex": "#27ae60"
+    },
+    "Bangunan (Built-up)": {
+      "display": "Pemukiman",
+      "count": 375904,
+      "pct": 6.4,
+      "ha": 541301.8,
+      "km2": 5413.02,
+      "color_hex": "#e74c3c"
+    },
+    "Lahan Pertanian (Sawah)": {
+      "display": "Sawah",
+      "count": 651419,
+      "pct": 11.09,
+      "ha": 938043.4,
+      "km2": 9380.43,
+      "color_hex": "#f1c40f"
+    }
+  },
+  "pixel": {
+    "Perairan (Water Body)": {
+      "display": "Air",
+      "count": 2544358,
+      "pct": 43.3,
+      "ha": 3663875.5,
+      "km2": 36638.76,
+      "color_hex": "#0984e3"
+    },
+    "Hutan Mangrove": {
+      "display": "Hutan Mangrove",
+      "count": 18225,
+      "pct": 0.31,
+      "ha": 26244.0,
+      "km2": 262.44,
+      "color_hex": "#8e44ad"
+    },
+    "Hutan Biasa": {
+      "display": "Hutan Non-Mangrove",
+      "count": 2744494,
+      "pct": 46.71,
+      "ha": 3952071.4,
+      "km2": 39520.71,
+      "color_hex": "#27ae60"
+    },
+    "Bangunan (Built-up)": {
+      "display": "Pemukiman",
+      "count": 248690,
+      "pct": 4.23,
+      "ha": 358113.6,
+      "km2": 3581.14,
+      "color_hex": "#e74c3c"
+    },
+    "Lahan Pertanian (Sawah)": {
+      "display": "Sawah",
+      "count": 320175,
+      "pct": 5.45,
+      "ha": 461052.0,
+      "km2": 4610.52,
+      "color_hex": "#f1c40f"
+    }
+  }
+}

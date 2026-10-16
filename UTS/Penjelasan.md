@@ -290,6 +290,65 @@ Pada peta di bawah ini, data uji yang diprediksi **BENAR** diberi garis tepi **h
 
 ---
 
+### 6.4 Komparasi Evaluasi Ganda: Akurasi Berbasis Piksel vs Akurasi Berbasis Poligon
+
+Dalam metodologi penginderaan jauh (*remote sensing*), evaluasi performa model dapat diukur melalui dua pendekatan:
+
+1. **Akurasi Berbasis Piksel (*Pixel-Based Accuracy*)**:
+   - Mengevaluasi ketepatan klasifikasi pada tiap-tiap titik koordinat piksel raster satelit secara individual.
+   - **Pada Titik Sampel Centroid**: Akurasi mencapai **82.35%** (56 dari 68 titik uji terklasifikasi tepat).
+   - **Pada Seluruh Piksel Zonal Poligon Uji (19.276 Piksel)**: Akurasi mencapai **98.02%** (18.894 dari 19.276 piksel terklasifikasi tepat).
+   - *Karakteristik:* Sangat peka terhadap anomali lokal dan piksel campuran (*mixed pixels*) pada batas tepi lahan.
+
+2. **Akurasi Berbasis Poligon (*Polygon-Based Accuracy*)**:
+   - Mengevaluasi ketepatan klasifikasi pada tingkat bidang poligon utuh dengan menerapkan agregasi modus / suara terbanyak (*majority voting*) dari seluruh piksel yang tercakup di dalam poligon uji tersebut.
+   - **Hasil Evaluasi**: Akurasi mencapai **86.76%** (59 dari 68 poligon uji terklasifikasi tepat).
+   - *Karakteristik:* Bersifat lebih stabil dan representatif untuk analisis pemetaan tata ruang wilayah karena kesalahan piksel minoritas di dalam bidang poligon (seperti gubuk kecil di tengah sawah atau celah jalan di dalam hutan) berhasil terfilter oleh suara mayoritas kelas lahan.
+
+#### Tabel Perbandingan Evaluasi Akurasi Piksel vs Akurasi Poligon:
+| Parameter Evaluasi | Akurasi Piksel (Centroid) | Akurasi Piksel (Zonal Raster) | Akurasi Poligon (Majority Vote) |
+| :--- | :---: | :---: | :---: |
+| **Unit Analisis** | 1 Titik Piksel / Poligon | Seluruh Piksel Citra | Bidang Poligon Utuh |
+| **Metode Penentuan** | Prediksi Fitur Spektral | Prediksi per Piksel Raster | Modus Mayoritas Piksel |
+| **Jumlah Data Uji ($N$)** | 68 Piksel | 19.276 Piksel | 68 Poligon |
+| **Jumlah Prediksi Tepat** | 56 Piksel | 18.894 Piksel | 59 Poligon |
+| **Persentase Akurasi** | **82.35%** | **98.02%** | **86.76%** |
+| **Resistensi Terhadap Noise** | Sensitif terhadap noise | Cukup sensitif | Sangat tinggi (terfilter) |
+
+---
+
+### 6.5 Komparasi Dua Model ML: Model Centroid vs Model Full-Pixel (52.327 Piksel)
+
+Untuk menjamin komparasi yang komprehensif, pada repositori ini disediakan **dua model Machine Learning terpisah** yang dapat dibandingkan performanya secara langsung:
+
+1. **Model 1: Model Centroid (model_rf.pkl)**
+   - **Sumber Data:** csv/dataset_sampel_5kelas_jatim.csv (270 sampel centroid).
+   - **Data Latih & Uji:** 202 train : 68 test.
+   - **Akurasi Uji:** **82.35%**.
+   - **Karakteristik:** Tiap poligon memiliki bobot yang persis sama (1 sampel per poligon), bebas dari bias ukuran luas poligon, proses training instan (<1 detik).
+
+2. **Model 2: Model Full-Pixel (model_rf_pixel.pkl)**
+   - **Sumber Data:** csv/dataset_sampel_all_pixels_jatim.csv (**52.327 baris piksel** diekstrak menggunakan `rasterio.mask` dari 270 poligon).
+   - **Data Latih & Uji:** 33.051 train piksel (202 poligon) : 19.276 test piksel (68 poligon uji).
+   - **Akurasi Piksel Uji (*Pixel Accuracy*):** **98.65%** (19.016 dari 19.276 piksel tepat).
+   - **Akurasi Poligon Uji (*Polygon Accuracy Majority Vote*):** **76.47%** (52 dari 68 poligon tepat).
+   - **Karakteristik:** Merekam seluruh variasi spektral mikro, heterogenitas kanopi, serta efek piksel campuran (*mixed pixels*) di dalam poligon.
+
+#### Tabel Perbandingan Head-to-Head Kedua Model:
+| Parameter Pemodelan | Model 1: Centroid (model_rf.pkl) | Model 2: Full-Pixel (model_rf_pixel.pkl) |
+| :--- | :---: | :---: |
+| **Metode Ekstraksi Fitur** | 1 Titik Centroid per Poligon | Seluruh Piksel di Dalam Poligon |
+| **Dataset Sumber** | dataset_sampel_5kelas_jatim.csv | dataset_sampel_all_pixels_jatim.csv |
+| **Total Sampel Training** | 202 Sampel Centroid | 33.051 Sampel Piksel |
+| **Total Data Testing** | 68 Sampel Centroid | 19.276 Sampel Piksel (68 Poligon Uji) |
+| **Akurasi Piksel (Pixel Level)** | **82.35%** (pada 68 centroid) | **98.65%** (pada 19.276 piksel) |
+| **Akurasi Poligon (Polygon Level)** | **82.35%** (evaluasi centroid) | **76.47% - 86.76%** (*majority vote*) |
+| **Waktu Ekstraksi Citra** | < 1 Detik | ~2.3 Detik |
+| **Resistensi Bias Luas Poligon** | Sangat Tinggi (1 poligon = 1 bobot) | Rentan jika ada poligon berukuran raksasa |
+| **Aplikasi Ideal** | Klasifikasi cepat & baseline benchmark | Klasifikasi spasial detail piksel-per-piksel |
+
+---
+
 ## 7. Peta Tematik Penuh Land Use / Land Cover (LULC) Jawa Timur
 
 Setelah model Random Forest terbukti memiliki akurasi 82.35%, model diterapkan untuk memprediksi **seluruh piksel raster daratan Provinsi Jawa Timur** (~5,8 juta piksel):
@@ -307,6 +366,25 @@ Peta Tematik Klasifikasi Penuh Tutupan Lahan (Land Use / Land Cover Map) Provins
 3. **Hutan Mangrove**: Terpetakan secara presisi di sepanjang garis pesisir estuari pantai utara (Wonorejo Surabaya Timur, Ujung Pangkah Gresik, Pasuruan, dan Teluk Grajagan Banyuwangi).
 4. **Lahan Pertanian (Sawah / Agriculture)**: Mendominasi lembah subur aluvial sepanjang aliran Sungai Brantas dan Bengawan Solo (Bojonegoro, Lamongan, Nganjuk, Madiun, Jombang, Kediri).
 5. **Bangunan / Area Terbangun (Built-up)**: Menggambarkan pola aglomerasi perkotaan metropolitan Surabaya Raya (Surabaya, Sidoarjo, Gresik), Malang Raya, serta pusat-pusat kota kabupaten.
+
+---
+
+### 7.1 Peta Interaktif Web Leaflet LULC (Google Hybrid Overlay) & Rekapitulasi Luas
+
+Selain peta kartografi statis, hasil klasifikasi tutupan lahan disajikan dalam bentuk **Peta Interaktif Web Leaflet (Folium)** yang menumpuk lapisan raster hasil prediksi langsung di atas citra satelit **Google Hybrid (Label)** dan **Google Satellite**.
+
+Peta ini dilengkapi kontrol lapisan independen per kelas lahan, slider transparansi *real-time*, legenda persentase, serta dukungan dua versi model Machine Learning:
+
+<iframe src="peta_lulc_interactive_pixel.html" width="100%" height="580px" frameborder="0" style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px;"></iframe>
+
+#### Tabel Rekapitulasi Estimasi Luas Tutupan Lahan Jawa Timur:
+| Kelas Tutupan Lahan | Model 1: Centroid (Piksel) | Model 1: Centroid (%) | Model 2: Full-Pixel (Piksel) | Model 2: Full-Pixel (%) | Estimasi Luas Area (Ha) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Air (Perairan)** | 2.673.376 | **45.50%** | 2.661.658 | **45.30%** | ~3.832.788 Ha |
+| **Hutan Non-Mangrove** | 1.801.702 | **30.66%** | 2.666.403 | **45.38%** | ~3.839.620 Ha |
+| **Lahan Pertanian (Sawah)** | 589.390 | **10.03%** | 309.655 | **5.27%** | ~445.903 Ha |
+| **Pemukiman (Bangunan)** | 345.895 | **5.89%** | 225.596 | **3.84%** | ~324.858 Ha |
+| **Hutan Mangrove** | 465.579 | **7.92%** | 12.630 | **0.21%** | ~18.187 Ha |
 
 ---
 

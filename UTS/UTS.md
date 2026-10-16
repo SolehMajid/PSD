@@ -19,7 +19,8 @@ Selamat datang di modul dokumentasi **Ujian Tengah Semester (UTS) Mata Kuliah Pr
 | **Indeks Spektral** | 4 Indeks: **NDVI**, **MNDWI**, **NDBI**, dan **Ratio_B8A_B11** |
 | **Resolusi Spasial** | **60 Meter** (Optimasi Cloud: Waktu proses 2–4 menit, *Zero Out-of-Memory*) |
 | **Algoritma Machine Learning** | **Random Forest Classifier** (100 Decision Trees) |
-| **Performa Akurasi Uji** | **82.35%** pada 68 sampel data uji independen (*Stratified Test Set*) |
+| **Performa Model 1 (Centroid)** | **82.35%** (Dievaluasi pada 68 sampel titik centroid poligon uji) |
+| **Performa Model 2 (Full-Pixel)** | **Akurasi Piksel:** **97.47%** (18.788 / 19.276 piksel data uji benar) <br> **Akurasi Poligon:** **81.82%** (*Majority Voting* 68 poligon uji) |
 
 ---
 
@@ -42,6 +43,7 @@ Modul UTS ini terbagi ke dalam sub-halaman berikut:
 Proyek ini menghasilkan visualisasi tematik dan interaktif:
 
 - **Peta Land Use / Land Cover (LULC) Penuh Jawa Timur**: Peta tematik standar publikasi ilmiah kartografi dengan skema 5 warna, legenda resmi, dan arah mata angin.
+- **Peta Interaktif Web Leaflet LULC (Google Hybrid Overlay)**: Visualisasi interaktif berbasis Folium/Leaflet yang menumpuk lapisan raster tutupan lahan langsung di atas citra satelit Google Hybrid berlabel kota/jalan, dilengkapi slider transparansi real-time, kontrol layer per kelas, dan tabel rekapitulasi luas area (Ha & km²).
 - **Peta Interaktif Sebaran Data Split (Folium)**: Peta interaktif berbasis Leaflet yang memisahkan poligon Data Latih (75%) dan Data Uji (25%) dengan fitur centang layer (*LayerControl*).
 - **Peta Interaktif Evaluasi Prediksi (Folium)**: Visualisasi spasial hasil evaluasi model yang membedakan prediksi **BENAR** (border hijau tebal) dan prediksi **SALAH** (border merah tebal putus-putus) langsung di atas citra satelit asli.
 
